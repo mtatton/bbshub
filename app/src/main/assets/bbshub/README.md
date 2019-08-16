@@ -367,7 +367,7 @@ var ByteArray = (function () {
 }());
 
 
-// ZMODEM INIT PACKET (c) 2019 --
+// ZMODEM INIT PACKET 2019 --
 
 function IToChar(val) {
   return(val.toString());
