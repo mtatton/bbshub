@@ -1,0 +1,60 @@
+package org.bbshub;
+
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Build;
+import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+
+public class MainActivity extends AppCompatActivity {
+
+    private WebView mWebView;
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        mWebView = (WebView) findViewById(R.id.webViewPage);
+        //mWebView.setInitialScale(100);
+        WebSettings webSettings = mWebView.getSettings();
+        //webSettings.setUserAgentString("Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543a Safari/419.3");
+        webSettings.setUserAgentString("Mozilla/5.0 (Linux; U; Android 2.2.1; en-us; Nexus One Build/FRG83) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1");
+        //webSettings.setUserAgentString("Mozilla/5.0 (Linux; Android 7.0; SM-G930V Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.125 Mobile Safari/537.36");
+        
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setUseWideViewPort(true);
+        mWebView.setInitialScale(100);
+
+
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
+
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
+
+        mWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        mWebView.setScrollbarFadingEnabled(false);
+        
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webSettings.setDefaultZoom(WebSettings.ZoomDensity.FAR);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
+        webSettings.setAllowFileAccessFromFileURLs(true);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            webSettings.setDatabasePath("/data/data/" + mWebView.getContext().getPackageName() + "/databases/");
+        }
+        mWebView.loadUrl("file:///android_asset/ftelnet/index.html");
+
+    }
+}
+

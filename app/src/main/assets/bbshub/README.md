@@ -1,0 +1,450 @@
+Hello All, what we have here today is a fTelnet mod. I would be glad for any opinions. Thanks in advance...
+
+bugs: works only in firefox, doesn't transfer files with Mystic, keyboard arrows not implemented, on older phones one has to use thicker keyboard (hacker's in my case)
+
+What works: Transfers from Enigma and Elle BBS and SynchroNet. Capital letter, small letters Escape and ENTER. Saving current server as favorite, restore last favorite, changing fonts on the fly. Turning off proxy, Turning off secure websocket. On Android in Firefox with thicker keyboard and the CP437_4x8 font displays well and when one touches the input box the software keyboard comes up. When entering server field the bbs list of 1907 auto-whispers...
+
+Note: For transfers use Y-Modem.
+To be done: much and many... Z-Modem implementation, cursor keys, lite version that works in Chrome, nicer intro ANSI screen...
+Selecting different proxy, call encode64
+
+Modded BBS tends to change font size -> one click reverse to 4x8 or disable fontchamge ob mobile.../
+
+---
+One button to hide settings... and everything except input field
+
+-> Items: KEYINPUT SERVERNAME SERVERLIST FONT ECHO PROXY WSS LASTFAV
+   Trigger: button CONFIG
+
+This Should not happen
+
+(Connneected to another BBS than it's on the server input)
+
+
+Add random bbs, add save of settings
+
+---
+Dark style server drop down
+
+-> https://stackoverflow.com/questions/27063753/putting-css-to-datalist
+
+
+---
+
+Notes for connection
+
+->
+
+
+Z-Modem
+
+public enum ControlBytes {
+  /// <summary> Padding char begins all frames ('*' = 42 = O52)</summary>
+  ZPAD = (int)'*',
+  /// <summary> Ctrl-X Zmodem escape char (24 = O30)</summary>
+  ZDLE = 24,
+  /// <summary> HEX frame indicator ('B')</summary>
+  ZHEX = (int)'B',
+
+ -- HERE 
+
+ HEX COMMON HEADER:
+ ZPAD ZPAD ZDLE ZHEX [ *  * 24 B ]
+ 
+static string HexCommonHeader {
+  get {
+     if (pHexCommonHeader == null) {
+       pHexCommonHeader = ((char)ControlBytes.ZPAD).ToString() + ((char)ControlBytes.ZPAD).ToString() +
+                        ((char)ControlBytes.ZDLE).ToString() + ((char)ControlBytes.ZHEX).ToString();
+       }
+     return pHexCommonHeader;
+   }
+}
+
+HEXFRAME 
+HEX COMMON HEADER TYPE X0 X1 X2 X3
+
+static string BuildHexFrame(HeaderType type, int arg0, int arg1, int arg2, int arg3) {
+
+  string frame = HexCommonHeader + ((int)type).ToString("x2") + arg0.ToString("x2")
+     + arg1.ToString("x2") + arg2.ToString("x2") + arg3.ToString("x2");
+
+  //Calcul du crc
+  int crc = ComputeHeaderCRC((int)type, arg0, arg1, arg2, arg3);
+  frame += crc.ToString("x4");
+
+  //Ajout de la fin de trame
+  frame += EndOfCommand;
+  return frame;
+ 
+}
+
+HEXFRAME 
+HEX COMMON HEADER TYPE X0 X1 X2 X3
+
+ZRINIT FRAME
+HEX COMMON HEADER PKTLEN 
+
+        static string BuildZRINITFrame(ZRINIT_Header_ZF0 trcapa, int BufferLength # 1024 )
+        {
+            int trpfort = ((int)trcapa) >> 0x8;
+            int trpfaible = ((int)trcapa) - trpfort * 256;
+
+            int BLfort = ((int)BufferLength) >> 0x8;
+            int BLfaible = ((int)BufferLength) - BLfort * 256;
+
+
+            string frame = BuildHexFrame(HeaderType.ZRINIT, BLfaible, BLfort, trpfort, trpfaible);
+            return frame;
+        }
+
+
+        public enum ZRINIT_Header_ZF0
+            /// <summary> Rx can send and receive true FDX </summary>
+            CANFULLDUPLEX = 0x1,
+            /// <summary> Rx can receive data during disk I/O </summary>
+            CANOVERLAPIO = 0x2,
+            /// <summary> Rx can send a break signal </summary>
+            CANBREAK = 0x4,
+            /// <summary> Receiver can decrypt </summary>
+            CANDECRYPT = 0x10,
+            /// <summary> Receiver can uncompress </summary>
+            CANLZW = 0x20,
+            /// <summary> Receiver can use 32 bit Frame Check </summary>
+            CANCRC32 = 0x40,
+            /// <summary> Receiver expects ctl chars to be escaped </summary>
+            ESCAPECONTOL = 0x100,
+            /// <summary> Receiver expects 8th bit to be escaped </summary>
+            ESCAPE8BIT = 0x200
+        }
+
+        static string BuildZRINITFrame(ZRINIT_Header_ZF0 trcapa, int BufferLength)
+        {
+            int trpfort = ((int)trcapa) >> 0x8;
+            int trpfaible = ((int)trcapa) - trpfort * 256;
+
+            int BLfort = ((int)BufferLength) >> 0x8;
+            int BLfaible = ((int)BufferLength) - BLfort * 256;
+
+
+            string frame = BuildHexFrame(HeaderType.ZRINIT, BLfaible, BLfort, trpfort, trpfaible);
+            return frame;
+        }
+
+
+11.5  ZFILE
+
+This frame denotes the beginning of a file transmission attempt.
+ZF0, ZF1, and ZF2 may contain options.  A value of 0 in each of these
+bytes implies no special treatment.  Options specified to the
+receiver override options specified to the sender with the exception
+of ZCBIN.  A ZCBIN from the sender overrides any other Conversion
+Option given to the receiver except ZCRESUM.  A ZCBIN from the
+receiver overrides any other Conversion Option sent by the sender.
+
+
+11.5  ZFILE
+
+This frame denotes the beginning of a file transmission attempt.
+ZF0, ZF1, and ZF2 may contain options.  A value of 0 in each of these
+bytes implies no special treatment.  Options specified to the
+receiver override options specified to the sender with the exception
+of ZCBIN.  A ZCBIN from the sender overrides any other Conversion
+Option given to the receiver except ZCRESUM.  A ZCBIN from the
+receiver overrides any other Conversion Option sent by the sender.
+
+# GNU Affero General Public License v3.0
+
+var CRC = (function () {
+    function CRC() {
+    }
+    CRC.Calculate16 = function (bytes) {
+        var CRC = 0;
+        var OldPosition = bytes.position;
+        bytes.position = 0;
+        while (bytes.bytesAvailable > 0) {
+            CRC = this.UpdateCrc(bytes.readUnsignedByte(), CRC);
+        }
+        CRC = this.UpdateCrc(0, CRC);
+        CRC = this.UpdateCrc(0, CRC);
+        bytes.position = OldPosition;
+        return CRC;
+    };
+    CRC.UpdateCrc = function (curByte, curCrc) {
+        return (this.CRC_TABLE[(curCrc >> 8) & 0x00FF] ^ (curCrc << 8) ^ curByte) & 0xFFFF;
+    };
+    return CRC;
+}());
+CRC.CRC_TABLE = [
+    0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
+    0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef,
+    0x1231, 0x0210, 0x3273, 0x2252, 0x52b5, 0x4294, 0x72f7, 0x62d6,
+    0x9339, 0x8318, 0xb37b, 0xa35a, 0xd3bd, 0xc39c, 0xf3ff, 0xe3de,
+    0x2462, 0x3443, 0x0420, 0x1401, 0x64e6, 0x74c7, 0x44a4, 0x5485,
+    0xa56a, 0xb54b, 0x8528, 0x9509, 0xe5ee, 0xf5cf, 0xc5ac, 0xd58d,
+    0x3653, 0x2672, 0x1611, 0x0630, 0x76d7, 0x66f6, 0x5695, 0x46b4,
+    0xb75b, 0xa77a, 0x9719, 0x8738, 0xf7df, 0xe7fe, 0xd79d, 0xc7bc,
+    0x48c4, 0x58e5, 0x6886, 0x78a7, 0x0840, 0x1861, 0x2802, 0x3823,
+    0xc9cc, 0xd9ed, 0xe98e, 0xf9af, 0x8948, 0x9969, 0xa90a, 0xb92b,
+    0x5af5, 0x4ad4, 0x7ab7, 0x6a96, 0x1a71, 0x0a50, 0x3a33, 0x2a12,
+    0xdbfd, 0xcbdc, 0xfbbf, 0xeb9e, 0x9b79, 0x8b58, 0xbb3b, 0xab1a,
+    0x6ca6, 0x7c87, 0x4ce4, 0x5cc5, 0x2c22, 0x3c03, 0x0c60, 0x1c41,
+    0xedae, 0xfd8f, 0xcdec, 0xddcd, 0xad2a, 0xbd0b, 0x8d68, 0x9d49,
+    0x7e97, 0x6eb6, 0x5ed5, 0x4ef4, 0x3e13, 0x2e32, 0x1e51, 0x0e70,
+    0xff9f, 0xefbe, 0xdfdd, 0xcffc, 0xbf1b, 0xaf3a, 0x9f59, 0x8f78,
+    0x9188, 0x81a9, 0xb1ca, 0xa1eb, 0xd10c, 0xc12d, 0xf14e, 0xe16f,
+    0x1080, 0x00a1, 0x30c2, 0x20e3, 0x5004, 0x4025, 0x7046, 0x6067,
+    0x83b9, 0x9398, 0xa3fb, 0xb3da, 0xc33d, 0xd31c, 0xe37f, 0xf35e,
+    0x02b1, 0x1290, 0x22f3, 0x32d2, 0x4235, 0x5214, 0x6277, 0x7256,
+    0xb5ea, 0xa5cb, 0x95a8, 0x8589, 0xf56e, 0xe54f, 0xd52c, 0xc50d,
+    0x34e2, 0x24c3, 0x14a0, 0x0481, 0x7466, 0x6447, 0x5424, 0x4405,
+    0xa7db, 0xb7fa, 0x8799, 0x97b8, 0xe75f, 0xf77e, 0xc71d, 0xd73c,
+    0x26d3, 0x36f2, 0x0691, 0x16b0, 0x6657, 0x7676, 0x4615, 0x5634,
+    0xd94c, 0xc96d, 0xf90e, 0xe92f, 0x99c8, 0x89e9, 0xb98a, 0xa9ab,
+    0x5844, 0x4865, 0x7806, 0x6827, 0x18c0, 0x08e1, 0x3882, 0x28a3,
+    0xcb7d, 0xdb5c, 0xeb3f, 0xfb1e, 0x8bf9, 0x9bd8, 0xabbb, 0xbb9a,
+    0x4a75, 0x5a54, 0x6a37, 0x7a16, 0x0af1, 0x1ad0, 0x2ab3, 0x3a92,
+    0xfd2e, 0xed0f, 0xdd6c, 0xcd4d, 0xbdaa, 0xad8b, 0x9de8, 0x8dc9,
+    0x7c26, 0x6c07, 0x5c64, 0x4c45, 0x3ca2, 0x2c83, 0x1ce0, 0x0cc1,
+    0xef1f, 0xff3e, 0xcf5d, 0xdf7c, 0xaf9b, 0xbfba, 0x8fd9, 0x9ff8,
+    0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
+];
+var ByteArray = (function () {
+    function ByteArray() {
+        this._Bytes = [];
+        this._Length = 0;
+        this._Position = 0;
+    }
+    Object.defineProperty(ByteArray.prototype, "bytesAvailable", {
+        get: function () {
+            return this._Length - this._Position;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ByteArray.prototype.clear = function () {
+        this._Bytes = [];
+        this._Length = 0;
+        this._Position = 0;
+    };
+    Object.defineProperty(ByteArray.prototype, "length", {
+        get: function () {
+            return this._Length;
+        },
+        set: function (value) {
+            if (value <= 0) {
+                this.clear();
+            }
+            else {
+                if (value < this._Length) {
+                    this._Bytes.splice(value, this._Length - value);
+                }
+                else if (value > this._Length) {
+                    for (var i = this._Length + 1; i <= value; i++) {
+                        this._Bytes.push(0);
+                    }
+                }
+                this._Length = value;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ByteArray.prototype, "position", {
+        get: function () {
+            return this._Position;
+        },
+        set: function (value) {
+            if (value <= 0) {
+                value = 0;
+            }
+            else if (value >= this._Length) {
+                value = this._Length;
+            }
+            this._Position = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ByteArray.prototype.readBytes = function (bytes, offset, length) {
+        if (typeof offset === 'undefined') {
+            offset = 0;
+        }
+        if (typeof length === 'undefined') {
+            length = 0;
+        }
+        if (this._Position + length > this._Length) {
+            throw 'There is not sufficient data available to read.';
+        }
+        var BytesPosition = bytes.position;
+        bytes.position = offset;
+        for (var i = 0; i < length; i++) {
+            bytes.writeByte(this._Bytes[this._Position++] & 0xFF);
+        }
+        bytes.position = BytesPosition;
+    };
+    ByteArray.prototype.readString = function (length) {
+        if (typeof length === 'undefined') {
+            length = this._Length;
+        }
+        var Result = '';
+        while ((length-- > 0) && (this._Position < this._Length)) {
+            Result += String.fromCharCode(this._Bytes[this._Position++]);
+        }
+        if (this.bytesAvailable === 0) {
+            this.clear();
+        }
+        return Result;
+    };
+    ByteArray.prototype.readUnsignedByte = function () {
+        if (this._Position >= this._Length) {
+            throw 'There is not sufficient data available to read.';
+        }
+        return (this._Bytes[this._Position++] & 0xFF);
+    };
+    ByteArray.prototype.readUnsignedShort = function () {
+        if (this._Position >= (this._Length - 1)) {
+            throw 'There is not sufficient data available to read.';
+        }
+        return ((this._Bytes[this._Position++] & 0xFF) << 8) + (this._Bytes[this._Position++] & 0xFF);
+    };
+    ByteArray.prototype.toString = function () {
+        var Result = '';
+        for (var i = 0; i < this._Length; i++) {
+            Result += String.fromCharCode(this._Bytes[i]);
+        }
+        return Result;
+    };
+    ByteArray.prototype.writeByte = function (value) {
+        this._Bytes[this._Position++] = (value & 0xFF);
+        if (this._Position > this._Length) {
+            this._Length++;
+        }
+    };
+    ByteArray.prototype.writeBytes = function (bytes, offset, length) {
+        if (!offset) {
+            offset = 0;
+        }
+        if (!length) {
+            length = 0;
+        }
+        if (offset < 0) {
+            offset = 0;
+        }
+        if (length < 0) {
+            return;
+        }
+        else if (length === 0) {
+            length = bytes.length;
+        }
+        if (offset >= bytes.length) {
+            offset = 0;
+        }
+        if (length > bytes.length) {
+            length = bytes.length;
+        }
+        if (offset + length > bytes.length) {
+            length = bytes.length - offset;
+        }
+        var BytesPosition = bytes.position;
+        bytes.position = offset;
+        for (var i = 0; i < length; i++) {
+            this.writeByte(bytes.readUnsignedByte());
+        }
+        bytes.position = BytesPosition;
+    };
+    ByteArray.prototype.writeShort = function (value) {
+        this.writeByte((value & 0xFF00) >> 8);
+        this.writeByte(value & 0x00FF);
+    };
+    ByteArray.prototype.writeString = function (text) {
+        var Textlength = text.length;
+        for (var i = 0; i < Textlength; i++) {
+            this.writeByte(text.charCodeAt(i) & 0xFF);
+        }
+    };
+    return ByteArray;
+}());
+
+
+// ZMODEM INIT PACKET (c) 2019 --
+
+function IToChar(val) {
+  return(val.toString());
+}
+
+function IToHex(val) {
+  var tmp = val.toString(16);
+  var ret = ("0"+tmp).slice(-2);
+  return(ret);
+}
+
+    hexToBytes = function(hex) {
+      //for (var bytes = [], c = 0; c < hex.length; c += 2)
+      //for (var bytes = new ByteArray(), c = 0; c < hex.length; c += 2)
+      pkt = new ByteArray();
+      for (c=0;c<hex.length;c+=2) {
+        pkt.writeByte(parseInt(hex.substr(c, 2), 16)); 
+      }
+      return(pkt);
+    }
+
+
+function getZRINIT() {
+
+  var ZPAD = '*';
+  var ZDLE = String.fromCharCode(24);
+  var ZHEX = 'B';
+  
+  
+  var HEX_COMMON_HEADER = IToChar(ZPAD) + IToChar(ZPAD) + IToChar(ZDLE) + IToChar(ZHEX);
+  
+  var PKT_LEN = 1024;
+  var ZRINIT = 1;
+  
+  var PKT_TYPE = ZRINIT;
+  var TRCAPA = 0; // TRANSFER CAPABILITIES
+  
+  var TRPFORT = TRCAPA >> 0x8; // A2
+  var TRPFAIBLE =  TRCAPA - TRPFORT * 256; // A3
+  var BLFORT = PKT_LEN >> 0x8; // A1
+  var BLFAIBLE = PKT_LEN - BLFORT * 256; // A0
+  
+  var ZRINIT = HEX_COMMON_HEADER + IToHex(PKT_TYPE) + IToHex(BLFAIBLE) + IToHex(BLFORT) + IToHex(TRPFAIBLE) + IToHex(TRPFAIBLE);
+  console.log(hexToBytes(ZRINIT));
+  console.log(CRC.Calculate16(hexToBytes((ZRINIT))));
+
+  # THIS IS WHAT'S MISSING:
+
+  /* DOT NET */
+  /* CUT HERE */
+  int crc = ComputeHeaderCRC((int)type, arg0, arg1, arg2, arg3);
+  frame += crc.ToString("x4");
+
+  //Ajout de la fin de trame
+  frame += EndOfCommand;                                                                                                                      
+  return frame;
+  /* CUT HERE */
+
+  return (ZRINIT);
+
+}
+
+console.log(getZRINIT());>
+
+
+11.5  ZFILE
+
+This frame denotes the beginning of a file transmission attempt.
+ZF0, ZF1, and ZF2 may contain options.  A value of 0 in each of these
+bytes implies no special treatment.  Options specified to the
+receiver override options specified to the sender with the exception
+of ZCBIN.  A ZCBIN from the sender overrides any other Conversion
+Option given to the receiver except ZCRESUM.  A ZCBIN from the
+receiver overrides any other Conversion Option sent by the sender.
+
+BynaryDataSubPacketReceiver(ref msZfile);
+
+Now I have to read SubPacket from Connection...
+
+

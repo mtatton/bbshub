@@ -1,0 +1,116 @@
+   ZEOF End of File
+
+   The server ZEOF End of File packet marks the end of a file transfer. It is
+   preceded by one or more server ZDATA packets and a server ZCRCE escape
+   sequence, none of which are acknowledged by the client. The client
+   acknowledges this packet with a ZRINIT packet. The client ZRINIT packet
+   indicates that the client is ready to receive the next file transfer, if
+   any.
+
+   0 1 2 3 4 5 6 7 8 9 1 1 2 3 4 5 6 7 8 9 2 1 2 3 4 5 6 7 8 9 3 1
+                       0                   0                   0
+   PadChars                        StartofPacket   FormatType
+   PacketType      Flag3           Flag2           Flag1
+   Flag0           CRCCheckBytes
+
+           PadChars (2 bytes): Pad characters.
+
+           Value          Meaning
+           0x2A   Single pad character.
+           0x2A2A Repeated pad character.
+
+           StartofPacket (1 byte): Packet start character.
+
+           Value       Meaning
+           0x18  ZDLE: Packet start.
+
+           FormatType (1 byte): Type of header format.
+
+           Value                           Meaning
+                 ASCII A: Packet has binary header with 16-bit CRC. This
+           0x41  format is used only by a sender when the following data
+                 block is binary coded.
+
+           PacketType (1 byte): Type of packet.
+
+           Value      Meaning
+           0x0B  ZEOF: End of file.
+
+           Flag3 (1 byte): Extended option flags. The value can be the
+           following:
+
+           Value                    Meaning
+           0x40  ZXSPARS: Encoding for sparse file operations.
+
+           Flag2 (1 byte): Transport option flags. The value can be one of
+           the following:
+
+           Value            Meaning
+           0x01  ZTLZW: Lempel-Ziv compression.
+           0x02  ZTCRYPT: Encryption.
+           0x03  ZTRLE: Run length encoding.
+
+           Flag1 (1 byte): File management option flags. The value can be one
+           of the following:
+
+           Value                       Meaning
+           0x80  ZMSKNOLOC: Skip file if not present at receiver.
+           0x01  ZMNEWL: Transfer if source is newer or longer.
+           0x02  ZMCRC: Transfer if different file CRC or length.
+           0x03  ZMAPND: Append contents to existing file (if any).
+           0x04  ZMCLOB: Replace existing file.
+           0x05  ZMNEW: Transfer if source is newer.
+           0x06  ZMDIFF: Transfer if dates or lengths are different.
+           0x07  ZMPROT: Protect destination file.
+
+           Flag0 (1 byte): Status flags. If the packet type is ZRINIT, the
+           value may be a combination of the following:
+
+           Value                           Meaning
+           0x01  CANFDX: Receiver can send and receive true FDX.
+           0x02  CANOVIO: Receiver can receive data during disk input/output
+                 (I/O).
+           0x04  CANBRK: Receiver can send a break signal.
+           0x08  CANCRY: Receiver can decrypt.
+           0x10  CANLZW: Receiver can uncompress.
+           0x20  CANFC32: Receiver can use 32-bit frame check.
+           0x40  ESCCTL: Receiver expects control characters to have escaped.
+           0x80  ESC8: Receiver expects 8th bit to have escaped.
+
+           CRCCheckBytes (2 bytes): A 16-bit CRC check field. For information
+           on the polynomial used for 16-bit CRC calculation, see ITU-T
+           Recommendation V.41, "Code-independent error-control system,"
+           November 1989.
+
+   For more information about CRC, see
+   [1]http://www2.rad.com/networks/1994/err_con/crc.htm.
+
+   Line control and escape sequences
+
+   --------------------------------------------------------------------------
+
+   Both a line control sequence and an escape sequence consist of the ZDLE
+   character (0x18) followed by a single character. A line control sequence
+   is a command sent as a character outside the regular packet structure. An
+   escape sequence allows the receiver to ignore the character following the
+   ZDLE character.
+
+   Value                   Description
+   0x180D                  Ignored by receiver.
+   0x1810                  Ignored by receiver.
+   0x1811                  Ignored by receiver.
+   0x1813                  Ignored by receiver.
+   0x1868 (ZDLE + ASCII h) ZCRCE : CRC next, packet ends, header packet
+                           follows.
+   0x1869 (ZDLE + ASCII i) ZCRCG: CRC next, packet continues nonstop.
+   0x186A (ZDLE + ASCII j) ZCRCQ: CRC next, packet continues, ZACK expected.
+   0x186B (ZDLE + ASCII k) ZCRCW: CRC next, ZACK expected, end of packet.
+   0x186C (ZDLE + ASCII l) ZRUB0: Translate to rubout 0177.
+   0x186D (ZDLE + ASCII m) ZRUB1: Translate to rubout 0377.
+   0x187F                  Ignored by receiver.
+   0x188D                  Ignored by receiver.
+   0x1890                  Ignored by receiver.
+   0x1891                  Ignored by receiver.
+   0x1893                  Ignored by receiver.
+   0x18FF                  Ignored by receiver.
+

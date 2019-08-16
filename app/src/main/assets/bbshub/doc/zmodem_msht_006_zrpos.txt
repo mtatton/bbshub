@@ -1,0 +1,114 @@
+   ZRPOS File Start Position
+
+   The client ZRPOS File Start Position packet defines a data transfer start
+   point in the current file that is waiting to be transferred. The packet is
+   a response to a server request [1]ZFILE File Attribute packet that
+   specifies a file name and file attributes for the current file waiting to
+   be transferred.
+
+   When parsing packet fields, note that this packet is in Zmodem hexadecimal
+   format. In Zmodem hexadecimal format, each hexadecimal digit in the
+   PacketType, RestartPosition0-3, and CRCCheckBytes[] fields is converted to
+   a US-ASCII character before transmission. For example, the one-byte
+   PacketType value "0x09" is transmitted as ASCII "09"; it appears on the
+   line as the hexadecimal value "0x3039".
+
+   0 1 2 3 4 5 6 7 8 9 1 1 2 3 4 5 6 7 8 9 2 1 2 3 4  5 6 7 8 9 3 1
+                       0                   0                    0
+   PadChars                        StartofPacket   FormatType
+   PacketType      RestartPosition0                RestartPosition1
+   ...             RestartPosition2                RestartPosition3
+   ...             CRCCheckBytes
+   ...
+
+           PadChars (2 bytes): Pad characters.
+
+           Value          Meaning
+           0x2A2A Repeated pad character.
+
+           StartofPacket (1 byte): Packet start character.
+
+           Value       Meaning
+           0x18  ZDLE: Packet start.
+
+           FormatType (1 byte): Type of header format.
+
+           Value                           Meaning
+                 Denotes that the PacketType, RestartPosition0-3, and
+           0x42  CRCCheckBytes[] fields in this packet are in Zmodem
+                 hexadecimal format.
+
+           PacketType (1 byte): Type of packet.
+
+           Value                           Meaning
+                 ZRPOS: Resume data transmission at the file position
+           0x09  specified. The field is transmitted in Zmodem hexadecimal
+                 format.
+
+           RestartPosition0 (2 bytes): Least-significant 8 bits of the file
+           restart point. The field is transmitted in Zmodem hexadecimal
+           format.
+
+           RestartPosition1 (2 bytes): File restart point bits. The field is
+           transmitted in Zmodem hexadecimal format.
+
+           RestartPosition2 (2 bytes): File restart point bits. The field is
+           transmitted in Zmodem hexadecimal format.
+
+           RestartPosition3 (2 bytes): Most-significant 8 bits of the file
+           restart point. The field is transmitted in Zmodem hexadecimal
+           format.
+
+           CRCCheckBytes (4 bytes): A 16-bit CRC check field. For information
+           on the polynomial used for 16-bit CRC calculation, see ITU-T
+           Recommendation V.41, "Code-independent error-control system,"
+           November 1989. The field is transmitted in Zmodem hexadecimal
+           format.
+
+   For more information about CRC, see
+   [2]http://www2.rad.com/networks/1994/err_con/crc.htm.
+
+   Zmodem Hexadecimal Format
+
+   --------------------------------------------------------------------------
+
+   Fields in this packet are in Zmodem hexadecimal format. In Zmodem
+   hexadecimal format, each of the two digits in a hexadecimal byte is
+   re-encoded before transmission into the corresponding US-ASCII character
+   from the set "0123456789abcdef". For example, the hexadecimal value "0x2E"
+   is re-encoded before transmission on the wire into ASCII "2e" ("0x3265").
+
+   This type of re-encoding allows the communication of any hexadecimal value
+   across non-transparent media that may reserve selected byte values for
+   media functions, for example, for modem commands. Such media are
+   transparent to the US-ASCII characters "0123456789abcdef".
+
+   Line Control and Escape Sequences
+
+   --------------------------------------------------------------------------
+
+   Both a line control sequence and an escape sequence consist of the ZDLE
+   character (0x18) followed by a single character. A line control sequence
+   is a command sent as a character outside the regular packet structure. An
+   escape sequence allows the receiver to ignore the character following the
+   ZDLE character.
+
+   Value                   Description
+   0x180D                  Ignored by receiver.
+   0x1810                  Ignored by receiver.
+   0x1811                  Ignored by receiver.
+   0x1813                  Ignored by receiver.
+   0x1868 (ZDLE + ASCII h) ZCRCE : CRC next, packet ends, header packet
+                           follows.
+   0x1869 (ZDLE + ASCII i) ZCRCG: CRC next, packet continues nonstop.
+   0x186A (ZDLE + ASCII j) ZCRCQ: CRC next, packet continues, ZACK expected.
+   0x186B (ZDLE + ASCII k) ZCRCW: CRC next, ZACK expected, end of packet.
+   0x186C (ZDLE + ASCII l) ZRUB0: Translate to rubout 0177.
+   0x186D (ZDLE + ASCII m) ZRUB1: Translate to rubout 0377.
+   0x187F                  Ignored by receiver.
+   0x188D                  Ignored by receiver.
+   0x1890                  Ignored by receiver.
+   0x1891                  Ignored by receiver.
+   0x1893                  Ignored by receiver.
+   0x18FF                  Ignored by receiver.
+

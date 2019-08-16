@@ -1,0 +1,1031 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BBSHUB</title>
+    <!-- 
+       // Added Proxylist
+       // Input Now Accepts Cursor Keys
+       // Edited Toggle Full Screen
+       // Added Notes stored Locally to Browser
+       // program now remembers last font used
+       // Added Random BBS at start and toggle to turn that off
+       // Proxy Preserve on Reload
+       // TBD: remember last visited BBS
+       // 20190801 Release v A001
+       //
+     -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta property="og:title" content="Bulletin Board Systems Hub" />
+    <meta name="description" content="Bulletin Board Systems Hub"/>
+    <meta name="theme-color" content="#000000" />
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data:">
+</head>
+<body bgcolor="black" onload="init();">
+<br>
+<link rel="stylesheet" type="text/css" href="ftelnet.css">
+<div id="fTelnetContainer">
+   <!-- <script src="ftelnet.norip.noxfer.js" id="fTelnetScript"></script> -->
+   <script src="ftelnet.rip.xfer.js" id="fTelnetScript"></script>
+   <!-- <script src="ftelnet.min.js" id="fTelnetScript"></script> -->
+   <script>
+     var Options = new fTelnetOptions();
+     Options.BareLFtoCRLF = false;
+     Options.BitsPerSecond = 57600;
+     Options.ConnectionType = 'telnet';
+     Options.Emulation = 'ansi-bbs';
+     Options.Enter = '\r';
+     Options.Font = 'CP437_4x8';
+     Options.Hostname = 'agency.bbs.nz';
+     Options.LocalEcho = false;
+     Options.Port = 23;
+     Options.ForceWss = false;
+     Options.ProxyHostname = '127.0.0.1';
+     Options.ProxyPort = 8080;
+     Options.ProxyPortSecure = 8080;
+     Options.ScreenColumns = 80;
+     Options.SplashScreen = "ICAgX19fX19fXyAgX19fX19fXyAgX19fX19fXyAgIF9fXyBfX18gX19fIF9fXyBfX19fX19fICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICBfICAgXHwgICBfICAgXHwgICBfICAgfCB8ICAgWSAgIHwgICBZICAgfCAgIF8gICBcICAgICAgICAgICAgICAgICAgICAgICAgICAgfC4gIDEgICAvfC4gIDEgICAvfCAgIDFfX198IHwuICAxICAgfC4gIHwgICB8LiAgMSAgIC8gICAgICAgICAgICAgICAgICAgICAgICAgICB8LiAgXyAgIFx8LiAgXyAgIFx8X19fXyAgIHwgfC4gIF8gICB8LiAgfCAgIHwuICBfICAgXCAgICAgICAgICAgICAgICAgICAgICAgICAgIHw6ICAxICAgIHw6ICAxICAgIHw6ICAxICAgfCB8OiAgfCAgIHw6ICAxICAgfDogIDEgICAgXCAgICAgICAgICAgICAgICAgICAgICAgICAgfDo6Li4gLiAgfDo6Li4gLiAgfDo6Li4gLiB8IHw6Oi58Oi4gfDo6Li4gLiB8OjouLiAuICAvICAgICAgICAgICAgICAgICAgICAgICAgICBgLS0tLS0tLSdgLS0tLS0tLSdgLS0tLS0tLScgYC0tLSAtLS1gLS0tLS0tLWAtLS0tLS0tJyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgX19fIF9fX19fX18gICAgICAgX18gICAgICAgICAgICAgX18gICAgX19fIF9fXyAgICAgICAgICBfXyAgICAgICAgICAgICAgICAgICAgLicgIF98ICAgICAgIC4tLS0tLXwgIC4tLS0tLS4tLS0tLXwgIHxfIHwgICBZICAgLi0tLS0tLi0tfCAgfCAgICAgICAgICAgICAgICAgICB8ICAgX3wufCAgIHwgfCAgLV9ffCAgfCAgICAgfCAgLV9ffCAgIF98fC4gICAgICB8ICBfICB8ICBfICB8ICAgICAgICAgICAgICAgICAgIHxfX3wgYC18LiAgfC18X19fX198X198X198X198X19fX198X19fX3x8LiBcXy8gIHxfX19fX3xfX19fX3wgICAgICAgICAgICAgICAgICAgICAgICAgIHw6ICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHw6ICB8ICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfDo6LnwgICAgICAgICAgICAgICAgICAgICAgICAgICAgfDo6Lnw6LiB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBgLS0tJyAgICAgICAgICAgICAgICAgICAgICAgICAgICBgLS0tIC0tLScgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaHR0cHM6Ly93d3cuZnRlbG5ldC5jYSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA==";
+     //Options.SplashScreen = "";
+     Options.VirtualKeyboardVisible=false;
+     Options.ScreenRows = 25;
+     var fTelnet = new fTelnetClient('fTelnetContainer', Options);
+   </script>
+   <center>
+   <input type="button" id="FULLSCREEN" class="fTelnetConnectButton" onclick="toggleFullScreen()" value="O" style="color:#555555" onmouseover="fullScreenHoverIn()" onmouseout="fullScreenHoverOut()" > 
+   <div id="MOBILESUP" style="display:none" >
+   <br>
+      <label>SERVER
+      <input id="SERVERNAME" list="SERVERLIST" name="serverName" class="ConfigInput" value="" size="40">
+      </label>
+      <datalist id="SERVERLIST">
+<option value="A 80's Apple II BBS|a80sappleiibbs.ddns.net:6502">
+<option value="A 90's Manila BBS|bbs.balcos.net:23">
+<option value="A Missing Chromosome|marabbs.ddns.net:23">
+<option value="A2K4.com|a2k4.com:2300">
+<option value="Absinthe BBS|absinthebbs.net:1940">
+<option value="Acid Underworld|blackflag.acid.org:31337">
+<option value="After Hours BBS|afterhours-bbs.com:23">
+<option value="After Hours BBS II|ah-bbs.com:2335">
+<option value="Afterlife|afterlife.dynu.com:6400">
+<option value="Agency BBS|agency.bbs.nz:23">
+<option value="AlcaBBS|bbs.alcatrash.org:23">
+<option value="Alcoholiday BBS|alco.bbs.io:23">
+<option value="Aleco Experience BBS|bbs.alecoexp.cz:23">
+<option value="Alien's Alcove|aliens.free.net.ph:23">
+<option value="Alley Cat BBS|alleycat.synchro.net:23">
+<option value="Alpha Centauri BBS|acentauribbs.no-ip.org:2002">
+<option value="Amiga City|amigacity.xyz:23">
+<option value="Amiga Frontier BBS|frontierbbs.net:8888">
+<option value="Amstrad BBS|amstrad.simulant.uk:464">
+<option value="Analog Waffle|waffle.c4bmore.com:2001">
+<option value="AnonBBS|anonbbs.org:1337">
+<option value="Another Droid BBS|andr01d.zapto.org:9999">
+<option value="Another Droid BBS (SSH)|andr01d.zapto.org:8888">
+<option value="Another F-ing BBS|anotherbbs.dynu.net:23">
+<option value="Apernevan.tk BBS|apernevan.tk:23">
+<option value="Arcade|bbs.thearcadebbs.xyz:23">
+<option value="Archaic Binary|ssl.archaicbinary.net:23">
+<option value="Archaic Binary (SSH)|ssl.archaicbinary.net:22">
+<option value="Arctic Zone BBS|bbs.arcticzonebbs.net:23">
+<option value="Asylum|jbtek.mooo.com:2323">
+<option value="AT2K Design BBS|bbs.at2k.org:23">
+<option value="Atavachron BBS|www.prova87.com:23">
+<option value="Atrium BBS|atriumbbs.org:23">
+<option value="Back to the Future|bttfbbs.com:23">
+<option value="Backwood Realm BBS|bwrbbs.ddns.net:23">
+<option value="Ballon BBS|fusen.ddns.net:55223">
+<option value="Banana Bender BBS|bbs.retrohack.se:8484">
+<option value="Barringer BBS|bbs.barringer.org:23">
+<option value="Basement BBS|basementbbs.ddns.net:9000">
+<option value="Basement Theory|basement.synchro.net:23">
+<option value="Battlestar BBS|battlestarbbs.dyndns.org:23">
+<option value="BBS MouseNet|bbs-mousenet.dynip.online:23">
+<option value="BCG-Box|bbbs.net:23">
+<option value="BCR Games Server|bcrgames.com:31337">
+<option value="Bear's Den|bbs.bearfather.net:23">
+<option value="Beavis & Butt-Head BBS|butthead.ddns.net:23">
+<option value="Bedrock BBS|bbs.kristyandrick.com:23">
+<option value="Before the Web|btw.loybbs.net:23232">
+<option value="Bento Box BBS|bentoboxbbs.com:23">
+<option value="Bible BBS|bbs.mywire.org:2300">
+<option value="Bit Bucket BBS|bbs.thebitbucket.ca:23">
+<option value="Bit Sunrise|bitsunrise.com:23">
+<option value="Bits & Bytes BBS|bbs.bnbbbs.net:2023">
+<option value="Black Flag|blackflag.acid.org:23">
+<option value="Black Sun BBS|blacksun.synchro.net:23">
+<option value="Blackfair's Manor|blackf.synchro.net:23">
+<option value="BlackICE|blackice.bbsindex.de:23">
+<option value="Blood Stone|wwiv.bsbbs.com:2323">
+<option value="Blue Northern Software BBS|bnsbbs.ddns.net:23000">
+<option value="Boink Machine|boinkmachine.ddns.net:23">
+<option value="BoobTube BBS|bbs.foodvault.net:23">
+<option value="Borderline BBS|borderlinebbs.dyndns.org:6400">
+<option value="Bottomless Abyss BBS|bbs.bottomlessabyss.net:2023">
+<option value="Box 24 BBS|bbs.box24.ch:23">
+<option value="Brainsuxx.inc BBS|brainsuxxinc.ddns.net:23">
+<option value="BrainToys BBS|braintoys.org:23">
+<option value="Brewery BBS|thebrewery.servebeer.com:6400">
+<option value="Bridge BBS|bridge.vkradio.com:23">
+<option value="Broken Bubble BBS|bbs.thebrokenbubble.com:23">
+<option value="Bucko's Den|wn2.duckdns.org:6407">
+<option value="ByteXchange BBS|bbs.thebytexchange.com:23">
+<option value="BZ & BZ BBS|bbs.red-green.com:23">
+<option value="Capital Station BBS|csbbs.dyndns.org:23">
+<option value="Capitol City Online BBS|capitolcityonline.net:23">
+<option value="Capitol Shrill BBS|capitolshrill.com:23">
+<option value="Captain's Quarters|cqbbs.ddns.net:6502">
+<option value="Castle Rock BBS (1)|casrock.com:23">
+<option value="Castle Rock BBS (2)|cedarvalleybbs.com:2424">
+<option value="Castle Rock BBS (3)|bbs.castlerockbbs.com:23">
+<option value="Cave BBS|cavebbs.homeip.net:23">
+<option value="CedarValley BBS|cedarvalleybbs.com:2525">
+<option value="Celtic Broch BBS|tcb.synchronetbbs.org:23">
+<option value="Central Ontario Remote|centralontarioremote.com:2323">
+<option value="Centronian BBS|bbs.centronian.ca:6400">
+<option value="Chaotic Bliss BBS|cbliss.synchro.net:23">
+<option value="CheckSum Acknowledged|24.225.22.26:2600">
+<option value="Chinwag|chinwag.leenooks.net:10023">
+<option value="Christian Fellowship|cfbbs.no-ip.com:26">
+<option value="CIA Amiga BBS|ciaamigabbs.dynu.net:6400">
+<option value="Circle Of Protection|cop.bbbs.no:4000">
+<option value="CIS Bulletin Board|bbs.cisbbs.nl:23">
+<option value="Citadel 64 BBS|citadel64.thejlab.com:6400">
+<option value="Cittadella BBS|bbs.cittadellabbs.it:4001">
+<option value="ClassicMUD|bbs.classicmud.com:2323">
+<option value="Clockwork Orange BBS|cobbs.ddns.net:23">
+<option value="Clube da Insonia BBS|bbs.conf.eti.br:23">
+<option value="Clutch BBS|bbs.clutchbbs.com:23">
+<option value="Coco's BBS|cocosbbs.fsxnet.nz:50600">
+<option value="Code Red BBS|coderedbbs.dyndns.org:2323">
+<option value="Colorado Springs Central Net BBS|cscnet1.net:23">
+<option value="Colossus BBS (1)|bbs.qzwx.com:23">
+<option value="Colossus BBS (2)|bbs.excalibursheath.com:23">
+<option value="Commodore Image|cib.dyndns.org:6400">
+<option value="Commodore Image 2|cib.dyndns.org:6401">
+<option value="Commodore Image 3|cib.dyndns.org:6402">
+<option value="Commodore4ever BBS|commodore4everbbs.dynu.net:6400">
+<option value="Computer God|cpugod.synchro.net:23">
+<option value="Convolution BBS|convolution.us:23">
+<option value="Cosmik Debris BBS|cosmikdebris.ddns.net:2323">
+<option value="Cosmo's Castle|ccbbs.zapto.org:3143">
+<option value="Cottonwood BBS|cottonwoodbbs.dyndns.org:6502">
+<option value="Crafting For a Cure|craftingforacure.synchronetbbs.org:23">
+<option value="Crazy World BBS|crazyworldbbs.com:23">
+<option value="Crystal Palace|cptalker.com:9900">
+<option value="Cube Dweller BBS|cubedwellerbbs.ddns.net:23">
+<option value="Cyberia BBS (1)|cyberiabbs.zapto.org:23">
+<option value="Cyberia BBS (2)|sysgod.org:23000">
+<option value="CypherPunk (Digitilsoft)|cypherpunkbbs.net:23">
+<option value="Dali's Cat BBS|daliscat.synchro.net:23">
+<option value="Danger Bay BBS|dangerbaybbs.dyndns.org:1337">
+<option value="Dark Forces BBS|darkforces.synchronetbbs.org:23">
+<option value="Dark Realms|darkrealms.ca:23">
+<option value="Dark Star BBS|baudgirl.com:2300">
+<option value="Darkscience BBS|bbs.darkscience.net:23">
+<option value="DarkSide of The Moon|darkside.synchro.net:23">
+<option value="Datanet BBS|datanetbbs.net:23">
+<option value="Dave's BBS|davesbbs.com:23">
+<option value="Dawn of Demise (1)|tdod.org:3000">
+<option value="Dawn of Demise (2)|tdod.org:5000">
+<option value="Days of Old BBS|daysofoldbbs.wilhartsolutions.com:23">
+<option value="Dead Zone|dzbbs.hopto.org:64128">
+<option value="Deadline BBS|deadline.aegis-corp.org:1337">
+<option value="Death Gate BBS|sbbs.sytes.net:23">
+<option value="Delta City BBS|deltacity.se:23">
+<option value="Diamond Mine Online|bbs.dmine.net:24">
+<option value="DigiSoft Club|digisoft.club:23">
+<option value="Digital Aquarium|digiaqua.synchro.net:23">
+<option value="Digital Distortion|digitaldistortionbbs.com:23">
+<option value="Digital Gatehouse|bbs.digitalgatehouse.com:23">
+<option value="Digital Realms BBS|connect.digitalrealms.net:2323">
+<option value="Digital Wurmhole|digitalwurmhole.ddns.net:2323">
+<option value="DigitalDial-Sta#1|digitaldial.homeunix.com:2300">
+<option value="Dinosaur Act|megalextoria.com:23">
+<option value="Disconnected Reality|discreal.synchronetbbs.org:23">
+<option value="Disksh0p! BBS|bbs.diskshop.ca:23">
+<option value="Disksh0p! BBS (SSH)|bbs.diskshop.ca:22">
+<option value="Distortion|d1st.org:23">
+<option value="DJ's Place|bbs.impakt.net:6502">
+<option value="Doc's Place Online|bbs.docsplace.org:26">
+<option value="Dock Sud|bbs.docksud.com.ar:23">
+<option value="Dogtown BBS|bbs.kiwi.net:23">
+<option value="Door Games Unlimited|dgu.strangled.net:23">
+<option value="DOSzombie BBS|bbs.doszombie.com:9000">
+<option value="Dragon's Lair BBS|dragon.vk3heg.net:23">
+<option value="DragonsWeb Labs BBS|bbs.dragonsweb.org:23">
+<option value="Drakefire BBS|bbs.drakefire.com:23">
+<option value="Dreamland BBS|bbs.dreamlandbbs.org:23">
+<option value="Dreamline|din.themajorbbs.com:23">
+<option value="Dungeon BBS|dungeon.barnabasmusic.com:23">
+<option value="Dungeons of Insanity|dungeonsbbs.com:2323">
+<option value="Dura-Europos|dura-bbs.net:6359">
+<option value="Dwarrowdelf BBS|dwabbs.ddns.net:2323">
+<option value="Echo Base BBS (1)|binkp.echo-base-bbs.com:23">
+<option value="Echo Base BBS (2)|www.eifelaktiv.de:23">
+<option value="Edge BBS|theedgebbs.dyndns.org:1541">
+<option value="Efectolinux|bbs.efectolinux.com:23">
+<option value="Eggy BBS|bbs.eggy.cc::2300">
+<option value="Eight Bit Boyz BBS|8bitboyz.bbs.io:6502">
+<option value="Electronic Chicken BBS|bbs.electronicchicken.com:23">
+<option value="Electronic Warfare BBS|bbs.ewbbs.net:23">
+<option value="Emcomm NY|emcommny.synchro.net:23">
+<option value="Emerald Hill BBS|bbs.emeraldhill.org:23">
+<option value="Emergency Scene|bbs.emergencyscene.net:2475">
+<option value="Empire of the Dragon BBS|bbs.eotd.com:23">
+<option value="End Of The Line BBS|endofthelinebbs.com:23">
+<option value="ERICADE Network|the.ericade.net:23">
+<option value="Error 1202 BBS|error1202bbs.ddns.net:1202">
+<option value="Error 404 BBS|error404bbs.ddns.net:404">
+<option value="Escape To Other Worlds|etow.com:23">
+<option value="Excaliber|members.excaliber.club:23">
+<option value="Eye of the Beholder|fido.beholderbbs.org:23">
+<option value="Fading Black BBS|fadingblack.net:23">
+<option value="Falcon BBS|bbs.falconbbs.nl:23">
+<option value="Fantastic World BBS|18.208.221.1:23">
+<option value="Fatcats BBS|fatcatsbbs.com:23">
+<option value="Fercho BBS|ferchobbs.ddns.net:2323">
+<option value="Files 4 Fun BBS|bbs.f4fbbs.com:62323">
+<option value="Fireball Express BBS|fireballex.com:23">
+<option value="First (1st) Choice Core|1stchoicecore.co.nz:23">
+<option value="FishingNET BBS|fishingnet.phatstar.org:7777">
+<option value="Flaming Telepaths|flamingtelepaths.duckdns.org:9148">
+<option value="Flashback BBS|flashbackbbs.sytes.net:6502">
+<option value="Flower BBS (1)|bbs.homeip.net:23">
+<option value="Flower BBS (2)|flower.sytes.net:31337">
+<option value="FlupH BBS|fluph.zapto.org:23">
+<option value="Fluxpod Info Service|fix.no:24">
+<option value="Fone Company|tfcbbs.com:6400">
+<option value="Force9 BBS|bbs.force9.org:23">
+<option value="Forever BBS|majormud.us:23">
+<option value="Freeside BBS|freeside.bbs.io:23">
+<option value="Freeway BBS|freeway.vkradio.com:23">
+<option value="Frozen Floppy BBS|bbs.retrohack.se:6464">
+<option value="Frugal Computing BBS|frugalbbs.com:23">
+<option value="Fusion BBS|fusionbbs.ddns.net:9640">
+<option value="Future World II|fw2.cnetbbs.net:6800">
+<option value="Galadin|bbs.galadin.net:23">
+<option value="GameMaster's Realm BBS|gamemastersrealm.com:23">
+<option value="GAP Prison Board|gapbbs.rdfig.net:4040">
+<option value="Gate BBS|thegatebbs.sytes.net:666">
+<option value="Gate BBS II|thegateb.synchro.net:23">
+<option value="Generation III POT-D|geniv.dyndns.org:23">
+<option value="Ghetto BBS|theghettobbs.com:2323">
+<option value="Guardian of Forever|guardian.synchro.net:23">
+<option value="Haciend|haciend.bbs.fi:23">
+<option value="HappyLand BBS|happyland.magickabbs.com:2023">
+<option value="Hard Drive Cafe|hdcbbs.com:23">
+<option value="Hated Reality|hatedreality.homeunix.net:23">
+<option value="Havens BBS|havens.synchronetbbs.org:23">
+<option value="Hawaii BBS Atari 8 Bit|atari-bbs.zapto.org:8888">
+<option value="Haxor's Palace|telnet.unknownrealm.org:23">
+<option value="Heatwave|heatwave.ddns.net:9640">
+<option value="Heights BBS|heightsbbs.heightspc.net:6860">
+<option value="Herbies-BBS|herbies-bbs.ddns.net:2323">
+<option value="Herbies-BBS II|herbies-bbs.ddns.net:23">
+<option value="Hidden Paradise BBS|hpbbs.dyndns.org:23">
+<option value="Hidden Paradise BBS II|hpbbs.dyndns.org:2323">
+<option value="High Desert BBS|highdesertbbs.ddns.net:6400">
+<option value="HispaMSX BBS|bbs.hispamsx.org:23">
+<option value="Horizon BBS|bbs.horizonbbs.net:23">
+<option value="HoyVision Hotline BBS (13th Floor 1987)|13th.hoyvision.com:6402">
+<option value="Hysteria BBS|hysteriabbs.com:23">
+<option value="IBBS|ibbs.sytes.net:24">
+<option value="Ignition BBS|ignitionbbs.com:23">
+<option value="Inara BBS|bbs.inarabbs.com:23">
+<option value="Infoline BBS|83.167.228.107:23">
+<option value="Infoline BBS (SSH)|83.167.228.107:1999">
+<option value="Ink Two|bbs.inktwo.com:23">
+<option value="Inland Utopia BBS|utopiabbs.zapto.org:2323">
+<option value="Internal Affairs|internalaffairsbbs.com:23">
+<option value="Iowa Student Assc. BBS (ISCA)|bbs.iscabbs.com:23">
+<option value="ISIS Unveiled|isisunveiled.no-ip.org:23">
+<option value="ITC (The Integrated Telecommunications Centre)|itcbbs.ddns.net:23000">
+<option value="JAFHL2|www.jafhl2.com:2002">
+<option value="JumpStart BBS|www.exciter.ws:23">
+<option value="KD3net|bbs.kd3.us:23">
+<option value="Keep BBS|thekeep.net:23">
+<option value="KernelError Networks BBS|bbs.kernelerror.com:10023">
+<option value="Killing Ground|bbs.zeusdev.co.uk:23">
+<option value="KOFO BBS|fido2.kofobbs.net:23">
+<option value="Kuehlbox|kuehlbox.wtf:23">
+<option value="Lair of the Wolverine|bbs.r2lotw.com:23">
+<option value="Legends of Yesteryear|loybbs.net:23322">
+<option value="Leisure Time BBS|bbs.riddells.net:10023">
+<option value="Level 29|bbs.fozztexx.com:23">
+<option value="Liane BBS|bbs.vslib.cz:23">
+<option value="Lightning BBS|lightningbbs.com:2400">
+<option value="Local Yocal|localyocalbbs.com:23">
+<option value="Loki's Den BBS|lokisdenbbs.com:23">
+<option value="Lord.stabs.org|lord.stabs.org:23">
+<option value="Lost Gonzo BBS|lostgonzo.synchronetbbs.org:23">
+<option value="Lostways BBS|99.73.141.110:23">
+<option value="Lower Planes, The|tlp.zapto.org:23">
+<option value="Lunatic Fringe BBS|lunatic.synchro.net:23">
+<option value="LV-426 BBS|lv426bbs.hopto.org:6464">
+<option value="M. Station|mstation.servebbs.com:23">
+<option value="MASH 4077 BBS|mash4077.ddns.net:23">
+<option value="MasterCom|masterco.synchro.net:23">
+<option value="MegaBBS|mbbs1.ddns.net:23">
+<option value="Metal Zone|tmzbbs01.synchro.net:23">
+<option value="Metro Olografix|bbs.olografix.org:23">
+<option value="MGI314 BBS|bbs.sternadel.pl:23">
+<option value="Mike's Mansion|fluxcap.synchro.net:2323">
+<option value="Ministry of Silly MUDS|ministrybbs.com:23">
+<option value="Missing Links|bbs.mlinks.com:23">
+<option value="MMN|bbs.ec.je:23">
+<option value="Moe's Tavern|moetiki.ddns.net:27">
+<option value="Mojo's World BBS|mojo.synchro.net:23">
+<option value="Momia BBS|momiabbs.no-ip.info:2323">
+<option value="Monochrome|mono.org:23">
+<option value="Moon Base Alpha|mba.dnsalias.com:23">
+<option value="Mordor BBS|casper.homeip.net:23">
+<option value="Mozy's Swamp and Red Dwarf BBS|bbs.mozysswamp.org:23">
+<option value="MSmac BBS|msmacbbs.maletazul.pt:23">
+<option value="MtlGeek|mtlgeek.synchro.net:23">
+<option value="Music Station|bbs.bsrealm.net:23">
+<option value="Mutiny BBS|mutinybbs.com:2332">
+<option value="Mysteria Majicka|majicka.at2k.org:23">
+<option value="Mystic Dreams|mysticdreams.dyndns.org:24">
+<option value="Mystic Dungeon BBS|mysticdungeon.club:1666">
+<option value="Mystic Hamradio|lu9dce.dynu.com:23">
+<option value="Mystic Island BBS|mysticisland.strangled.net:23">
+<option value="Mystic PI BBS|bcw142.zapto.org:23">
+<option value="Mystic Prison Board BBS|pbmystic.rdfig.net:24">
+<option value="Mystic Rhythms BBS|mystic.wwivbbs.org:23">
+<option value="N3HYM Amateur Radio BBS|n3hym.ddns.net:8010">
+<option value="Necronomicon BBS|necrobbs.strangled.net:23">
+<option value="Necronomicon BBS (CNet)|necrobbs.strangled.net:40">
+<option value="Necropolis|necrobbs.com:23">
+<option value="Neo-Vintage BBS|bbs.delorted.com:23">
+<option value="Net247|net247.io:23">
+<option value="Netvillage|netvillage.com:23">
+<option value="Never Never Land|neverneverlandbbs.com:23">
+<option value="New Frontier ][ BBS|frontierbbs.net:23">
+<option value="Newton City BBS|bbs.newtoncity.org:23">
+<option value="Ninety-Six Forty 9640 News BBS|9640news.ddns.net:9640:23">
+<option value="Ninho do Abutre 2 BBS|abutre.no-ip.org:2323">
+<option value="Nola Carrier|nolacarrier.com:504">
+<option value="Nuclear Club|nuke.club:23">
+<option value="Nut Asylum (XTCBOX)|xtcbox.org:2323">
+<option value="Oasis BBS|oasisbbs.hopto.org:6400">
+<option value="Old Time's Sake BBS|konchoulias.no-ip.org:2323">
+<option value="Omicron Theta BBS (1)|winserver.org:23">
+<option value="Omicron Theta BBS (2)|winserver.org:2300">
+<option value="Onix BBS|onixbbs.servebbs.com:23">
+<option value="Online BBS|online-bbs.selfhost.bz:23">
+<option value="Orbit BBS|orbitbbs.ddns.net:7210">
+<option value="Orchestra BBS|sacrebase.servebbs.net:486">
+<option value="OuijaBoard BBS|bbs2.ouijabrd.net:23">
+<option value="Outer Limits BBS|outerlimitsbbs.gotdns.org:8000">
+<option value="Outpost BBS|bbs.outpostbbs.net:2303">
+<option value="Outwest BBS|outwestbbs.com:23">
+<option value="Paladin's Castle|paladin-castlebbs.mynetgear.com:2323">
+<option value="Palantir BBS|palantirbbs.ddns.net:23">
+<option value="Paradox BBS|paradox.farted.net:23">
+<option value="Parity Error BBS|theparityerror.com:23">
+<option value="Part-Time BBS|ptbbs.ddns.net:8000">
+<option value="Particles! BBS|particlesbbs.dyndns.org:6400">
+<option value="PB PCBoard BBS|pbmystic.rdfig.net:1023">
+<option value="PBNET BBS|pufa.pbnet.ro:23">
+<option value="PBSync Prison Board BBS|wcalt.rdfig.net:2424">
+<option value="Penalty Box|pbox.no-ip.org:23">
+<option value="Pepzi BBS|pepzi.eu:23">
+<option value="Phantasm|phantasm.bbs.io:4489">
+<option value="Pharcyde|bbs.pharcyde.org:23">
+<option value="Phoenix BBS|phoenix.bnbbbs.net:2323">
+<option value="Phospher BBS|bbs.phospher.com:23">
+<option value="Phunc BBS|bbs.phunc.com:23">
+<option value="Pie33|pie33.com:2223">
+<option value="Pipeline BBS|bbs.wantit.net:23">
+<option value="Pirate's Cove|picovebbs.com:6860">
+<option value="Planet Afro BBS|cetialphafive.com:8888">
+<option value="Possum Lodge South BBS|capitolcityonline.net:7636">
+<option value="Prism BBS|filegate.net:2030">
+<option value="Prison Board|rdfig.net:23">
+<option value="Prisoner's Game Lounge|gapbbs.rdfig.net:23">
+<option value="Pro-Kegs|proline.ksherlock.com:6523">
+<option value="Psychosis BBS|psychosisbbs.ddns.net:2323">
+<option value="PTT Bulletin Board System (1)|ptt.cc:23">
+<option value="PTT Bulletin Board System (2)|ptt2.cc:23">
+<option value="Puma BBS|pumabbs.dynu.net:23">
+<option value="Pyffle HQ|hq.pyffle.com:23">
+<option value="QRP.gr BBS|qrp.gr:23">
+<option value="Quantum Wormhole|bbs.erb.pw:23">
+<option value="Quazar BBS Door Game Server|quazarbbs.dynu.net:2323">
+<option value="Queen's Kingdom BBS|queenskingdom.ddns.net:39">
+<option value="Raiders Inc. BBS|vintagebbsing.com:23">
+<option value="RapidFire|rapidfire.hopto.org:64128">
+<option value="Razor's Domain 3.141592|bbs.razorsdomain.com:31415">
+<option value="Razor's Domain/2|bbs.razorsdomain.com:23230">
+<option value="Razz Pie BBS|razzpie.ddns.net:2300">
+<option value="RBB Systems Int'l|rbb.bbs.fi:32">
+<option value="Realitycheck BBS|realitycheckbbs.org:23">
+<option value="Realm of Darkness|www.trod.org:23">
+<option value="Realm of Serion|connect.serionbbs.com:23">
+<option value="Region 15 HQ|region15.net:23">
+<option value="Reign Of Fire BBS|rofbbs.ddns.net:2300">
+<option value="Resistance Pride|resistancepride.sytes.net:23">
+<option value="Retro Underground BBS|retrounderground.org:1337">
+<option value="RetroBBS|retrobbs.rocksolidbbs.com:23">
+<option value="RetroDigital BBS|rdnetbbs.com:23">
+<option value="Riktronics BBS|rkbbs.net:23">
+<option value="RMAC Diversi-Dial Station #34|rmac.d-dial.com:23">
+<option value="RMSBBS|rmsbbs.ddns.net:23">
+<option value="RSR Trip Radio|rsr.synchro.net:23">
+<option value="Rusty Mailbox|trmb.ca:2030">
+<option value="Sagramour's Realm|sagramoursrealm.zapto.org:23">
+<option value="Sanctuary BBS|sanctuary.zapto.org:1541">
+<option value="Sanctum II BBS (1)|telnet.sanctumbbs.com:23">
+<option value="Sanctum II BBS (2)|sanctumbbs.com:6502">
+<option value="Sandnes BBS|stokmarknes.org:24">
+<option value="Sands of Time|162.243.54.214:23">
+<option value="Sanitarium BBS|telnet.wallofhate.com:23">
+<option value="Santronics Software|online.winserver.com:23">
+<option value="Saturn's Orbit|saturnsorbit.hopto.org:23">
+<option value="Scratched Reality|reality.throwbackbbs.com:2323">
+<option value="SD2IEC Test BBS|cib.dyndns.org:6403">
+<option value="Sea Breeze Gaming Network|seabreeze.servegame.com:23">
+<option value="Seattle Community Network|scn.org:23">
+<option value="Second (2nd) Choice Core|2ndchoicecore.ddns.net:1024">
+<option value="Second Coming BBS|scbbs.ddns.net:6400">
+<option value="Section One BBS|sectiononebbs.com:23">
+<option value="Seventy-Nine (79) Columns|oddnetwork.org:23">
+<option value="Shadow Realm BBS|shadowrealmbbs.com:23">
+<option value="Shadowscope|bbs.shadowscope.com:23">
+<option value="Shenk's Express|shenks.synchro.net:23">
+<option value="Shodan's Core|shodan.synchro.net:23">
+<option value="Silicon Underground|siliconu.com:23">
+<option value="SilverHawk BBS|bbs.silverhawk.me:6400">
+<option value="Sin City BBS|bbs.sinfo.info:23">
+<option value="Sinclair Retro BBS|retrobbs.sinclair.homepc.it:23">
+<option value="Sinner's Haven II|bbs.sinnershaven.com:23">
+<option value="Sixty-Four Vintage BBS|64vintageremixbbs.dyndns.org:6400">
+<option value="Skynet BBS|skynetbbs.dynu.net:6400">
+<option value="Skynet Gaming BBS|skynetgaming.com:23">
+<option value="Slasho.me BBS|slasho.me:23">
+<option value="Slate Hell BBS|msbgtn01.synchro.net:23">
+<option value="Slime City BBS|bbs.retrohack.se:23">
+<option value="Sloane BBS|sloanebbs.com:2323">
+<option value="SmokyThing BBS|inflecto.org:23">
+<option value="Space Odyssey|bbs.sobbs.org:23">
+<option value="SpaceSST BBS|mccarragher.org:23">
+<option value="Spiffwiggler BBS|spiffwig.synchro.net:23">
+<option value="Starbase 21|bbs.starbase21.net:23">
+<option value="Starbase Discovery|sb-discovery.com:23">
+<option value="Static Speakeasy|bbs.staticspeakeasy.cloud:23">
+<option value="Stepping Stone BBS|vintagebbsing.com:2023">
+<option value="Stormies BBS|stormie.synchro.net:23">
+<option value="Subcarrier BBS|subcarrier.ignorelist.com:2323">
+<option value="Super Dimension Fortress (SDF-1)|sdf.lonestar.org:23">
+<option value="Sursum Corda! BBS|bbs.sursum-corda.com:23">
+<option value="Switchroom BBS|bbs.theswitchroom.net:23">
+<option value="Swords of Chaos Forever BBS|bbs.soc4ever.com:23">
+<option value="Synchronix|freebsd.synchro.net:23">
+<option value="System One BBS|systemone.ddns.net:6400">
+<option value="T311net BBS|t311net.fsxnet.nz:23">
+<option value="Tardis BBS|bbs.cortex-media.info:23">
+<option value="Techienet BBS|bbs.techienet.com:23">
+<option value="Technician's Hangout BBS|technicianshangout.ddns.net:23">
+<option value="Techware|bbs.techware2k.com:23">
+<option value="Telehack|telehack.com:23">
+<option value="Temple of Doom|tod.eothnet.com:23">
+<option value="Terminal Obsession|terminal-obsession.hopto.org:1541">
+<option value="THe iNSAnE AsYLuM BBs|tiabbs.synchro.net:23">
+<option value="The Rock BBS III|therockbbs.net:10023">
+<option value="Third (3rd) Choice Core BBS|3rdchoicecore.ddns.net:1022">
+<option value="Thirteenth (13th) Floor BBS|bbs.hoyvision.com:23">
+<option value="Thirteenth (13th) Floor BBS: C64 Version [Node 1]|13th.hoyvision.com:6400">
+<option value="Thirteenth (13th) Floor BBS: C64 Version [Node 2]|bbs.hoyvision.com:6400">
+<option value="Thirteenth (13th) Leader BBS|13leader.net:8023">
+<option value="This Old Cabin BBS|bbs.thisoldcabin.net:2323">
+<option value="Throwback BBS|bbs.throwbackbbs.com:23">
+<option value="Thunder-Storm BBS|thunder-storm.ca:10023">
+<option value="Thunderbolt BBS|tbolt.synchro.net:23">
+<option value="Time Warp of Future|time.synchro.net:24">
+<option value="Tiny's BBS (1)|tinysbbs.com:3023">
+<option value="Tiny's BBS (2)|tinysbbs.com:2023">
+<option value="Titan at Redhill|redhill.net.nz:23">
+<option value="Tommy's Holiday Camp|vintage.thcbbs.com:23">
+<option value="Tornado Electronic Communications System|bbs.tecs.de:23">
+<option value="Total Lost BBS|bbs.deek.se:23">
+<option value="Totallynerd BBS|totallynerd.com:23">
+<option value="Toxic Laboratory|toxicbbs.com:23">
+<option value="Trashcan BBS|bbs.thenet.gen.nz:2324">
+<option value="Troy's Den|troybbs.com:23">
+<option value="Two Dudes BBS|twodudesbbs.com:23">
+<option value="Uncensored!|uncensored.citadel.org:23">
+<option value="Undercurrents BBS (Enigma)|undercurrents.io:8088">
+<option value="Undercurrents BBS (Synchronet)|uc.synchronetbbs.org:23">
+<option value="Underground BBS|x.theundergroundbbs.net:23">
+<option value="Unicyber BBS|bbs.unicyber.co.uk:2323">
+<option value="Universal Joint BBS|bbs.ujoint.org:23">
+<option value="Unknown BBS|tubbs.synchro.net:23">
+<option value="US 99 BBS|bbs.quinnnet.org:23">
+<option value="UserClub BBS|userclub-bbs.com:23">
+<option value="VA7AQD's Tavern|bbs.isurf.ca:23">
+<option value="VADV Prison Board BBS|rdfig.net:2812">
+<option value="Vague BBS|47.203.188.116:23">
+<option value="Valhalla Home Services (1)|bbs.valhallahomeservices.com:23">
+<option value="Valhalla Home Services (2)|bbs.valhallahomeservices.com:24">
+<option value="Valley BBS|valleybbs.com:23">
+<option value="Veleno BBS|telnet.velenobbs.net:23">
+<option value="Vengeance BBS|vengeance.dynu.com:1337">
+<option value="Vertrauen|vert.synchro.net:23">
+<option value="Veteran BBS|bbs.thewelborns.net:28">
+<option value="Virtualaltair.com Remote CP/M|altair.virtualaltair.com:4667">
+<option value="Vista BBS|vistabbs.ianthurston.com:2323">
+<option value="Void BBS|voidbbs.com:23">
+<option value="W4BFB|packet.w4bfb.org:2333">
+<option value="WABAC Machine BBS|wabac.ccsnet.com:23">
+<option value="War Ensemble BBS|warensemble.com:23">
+<option value="Wastelands BBS|wastelands-bbs.net:23">
+<option value="Weather Station BBS|bbs.weather-station.org:23">
+<option value="Whisky Lover's Amateur Radio BBS|wd1cks.org:23">
+<option value="Wildcat's Castle BBS|bbs.wccastle.net:2424">
+<option value="Willow Creek BBS|willowcreekbbs.dynu.net:6400">
+<option value="Wintermute BBS|wintermute.spdns.eu:23">
+<option value="Wizard's Castle|wccastle.synchro.net:24">
+<option value="Wretched Beagle BBS|bbs.wretchedbeagle.com:23">
+<option value="Wrong Number ][ BBS|wn2.duckdns.org:23">
+<option value="Wrong Number ][ V1.2b|cib.dyndns.org:6404">
+<option value="Wrong Number ][ V2.0|cib.dyndns.org:6405">
+<option value="Wrong Number ]I[ BBS|wn2.duckdns.org:6400">
+<option value="Wrong Number V BBS|wn2.duckdns.org:6408">
+<option value="WWIV Frontier BBS|frontierbbs.net:2333">
+<option value="X-Caliber BBS|bbs.aholix.net:6800">
+<option value="Xibalba|xibalba.l33t.codes:44510">
+<option value="YellowSac|yellowsac.araknet.xyz:23">
+<option value="Zone BBS|zonebbs.net:23">
+      </datalist>
+<br>
+  |-- <input id="KEYINPUT" class="ConfigInput" onpropertychange="TextChange(this)" size=4" oninput="userInput()" onkeydown="userCursor(event)" VALUE=""> --|
+<br>
+   <input type="button" id="NOTESBTN" class="fTelnetConnectButton" onclick="toggleNotes()" value="Notes">
+   <input type="button" id="CONFIGBTN" class="fTelnetConnectButton" onclick="toggleConfig()" value="Settings">
+  </div>
+<div id="NOTESDIV" style="display:none">
+<br>
+  <textarea id="NOTES" class="configInput" onfocusin="enterTheNotes()" onfocusout="exitTheNotes()" cols="20" rows="1"></textarea>
+</div>
+<div id="CONFIG" style="display:none">
+  <br>
+    <BR>
+      <label>FONT <select id="FONT" list="FONTLIST" class="ConfigInput" onpropertychange="fontChange(this)"></label>
+<option value="CP437_4x8">CP437 4x8</option>
+<option value="Amiga-BStruct">Amiga-BStruct</option>
+<option value="Amiga-MicroKnight">Amiga-MicroKnight</option>
+<option value="Amiga-MoSoul">Amiga-MoSoul</option>
+<option value="Amiga-PotNoodle">Amiga-PotNoodle</option>
+<option value="Amiga-Topaz">Amiga-Topaz</option>
+<option value="Amiga-TopazPlus">Amiga-TopazPlus</option>
+<option value="Atari-Arabic">Atari-Arabic</option>
+<option value="Atari-Graphics">Atari-Graphics</option>
+<option value="Atari-International">Atari-International</option>
+<option value="C128-Lower">C128-Lower</option>
+<option value="C128-Upper">C128-Upper</option>
+<option value="C64-Lower">C64-Lower</option>
+<option value="C64-Upper">C64-Upper</option>
+<option value="CP437">CP437</option>
+<option value="CP737">CP737</option>
+<option value="CP775">CP775</option>
+<option value="CP850">CP850</option>
+<option value="CP852">CP852</option>
+<option value="CP855">CP855</option>
+<option value="CP857">CP857</option>
+<option value="CP860">CP860</option>
+<option value="CP861">CP861</option>
+<option value="CP862">CP862</option>
+<option value="CP863">CP863</option>
+<option value="CP865">CP865</option>
+<option value="CP866">CP866</option>
+<option value="CP869">CP869</option>
+<option value="RIP">RIP</option>
+<option value="SyncTerm-0">SyncTerm-0</option>
+<option value="SyncTerm-1">SyncTerm-1</option>
+<option value="SyncTerm-10">SyncTerm-10</option>
+<option value="SyncTerm-11">SyncTerm-11</option>
+<option value="SyncTerm-12">SyncTerm-12</option>
+<option value="SyncTerm-13">SyncTerm-13</option>
+<option value="SyncTerm-14">SyncTerm-14</option>
+<option value="SyncTerm-15">SyncTerm-15</option>
+<option value="SyncTerm-16">SyncTerm-16</option>
+<option value="SyncTerm-17">SyncTerm-17</option>
+<option value="SyncTerm-18">SyncTerm-18</option>
+<option value="SyncTerm-19">SyncTerm-19</option>
+<option value="SyncTerm-2">SyncTerm-2</option>
+<option value="SyncTerm-20">SyncTerm-20</option>
+<option value="SyncTerm-21">SyncTerm-21</option>
+<option value="SyncTerm-22">SyncTerm-22</option>
+<option value="SyncTerm-23">SyncTerm-23</option>
+<option value="SyncTerm-24">SyncTerm-24</option>
+<option value="SyncTerm-25">SyncTerm-25</option>
+<option value="SyncTerm-26">SyncTerm-26</option>
+<option value="SyncTerm-27">SyncTerm-27</option>
+<option value="SyncTerm-28">SyncTerm-28</option>
+<option value="SyncTerm-29">SyncTerm-29</option>
+<option value="SyncTerm-3">SyncTerm-3</option>
+<option value="SyncTerm-30">SyncTerm-30</option>
+<option value="SyncTerm-31">SyncTerm-31</option>
+<option value="SyncTerm-32">SyncTerm-32</option>
+<option value="SyncTerm-33">SyncTerm-33</option>
+<option value="SyncTerm-34">SyncTerm-34</option>
+<option value="SyncTerm-35">SyncTerm-35</option>
+<option value="SyncTerm-36">SyncTerm-36</option>
+<option value="SyncTerm-37">SyncTerm-37</option>
+<option value="SyncTerm-38">SyncTerm-38</option>
+<option value="SyncTerm-39">SyncTerm-39</option>
+<option value="SyncTerm-4">SyncTerm-4</option>
+<option value="SyncTerm-40">SyncTerm-40</option>
+<option value="SyncTerm-5">SyncTerm-5</option>
+<option value="SyncTerm-6">SyncTerm-6</option>
+<option value="SyncTerm-7">SyncTerm-7</option>
+<option value="SyncTerm-8">SyncTerm-8</option>
+<option value="SyncTerm-9">SyncTerm-9</option>
+</datalist>
+</select>
+<br>
+<label>Proxy<select id="PROXY" list="PROXYLIST" class="ConfigInput" onpropertychange="proxyChange(this)"></label>
+  <option value='proxy-au.ftelnet.ca'>AU 001 Australia fTelnet Proxy</option>
+  <option value='proxy-nl.ftelnet.ca'>EU 001 Netherlands fTelnet Proxy</option>
+  <option value='proxy-us-ga.ftelnet.ca'>US 001 Georgia fTelnet Proxy</option>
+  <option value='proxy-us-ca.ftelnet.ca'>US 002 California fTelnet Proxy</option>
+  <option value='proxy-us-nj.ftelnet.ca'>US 003 New Yersey fTelnet Proxy</option>
+  <option value='bbshub.org' selected>BBS HUB fTelnet Proxy</option>
+  <option value='127.0.0.1'>Localhost Proxy</option>
+</datalist>
+</select>
+<br>
+<input type="button" value="FAV" class="fTelnetConnectButton" onclick="addServerToFav()">
+<input type="button" value="LASTFAV" class="fTelnetConnectButton" onclick="getServerFromFav()">
+<br>
+RAND <input type="checkbox" id="RANDOM" class="fTelnetConnectButton" style="color:#555555"> 
+WSS <input type="checkbox" id="WSS" checked>
+</div>
+</center>
+<div>
+<script>
+
+   var ctrlPressed = 0;
+   var altPressed = 0;
+   var configShown = 0;
+   var fullScreen = 0;
+   
+   var x = document.querySelector('.fTelnetCrtCanvas');
+
+   x.tabIndex = 0;
+   x.focus();
+   x.click();
+
+   function setOption(selectElement,value) {
+     var option=selectElement.options;
+     for (i=0; i<option;i++) {
+       if (options.value == value) {
+         selectElement.selectedIndex = i;
+         return (true);
+       }
+     }
+     return(false);
+   } 
+
+   var p = document.querySelector('#PROXY');
+   p.addEventListener('input', function (evt) {
+     proxyChange(this.value);
+   });
+
+   function proxyChange(val) {
+     fTelnet._Options.ProxyHostname=val;
+     //fTelnet._Options.ProxyPort = 443;
+     fTelnet._Options.ProxyPort = 8080;
+     setStorageProxy(val);
+     var fd = document.querySelector('#PROXY');
+     setOption(fd,val)
+     //fd.selectedIndex=val;
+     console.log("Proxy Changed to: " + val);
+   }
+
+
+   var f = document.querySelector('#FONT');
+   f.addEventListener('input', function (evt) {
+     inputFontChange([this.value,this.selectedIndex]);
+   });
+   function inputFontChange(val) {
+     addToFontHistory(val[0],val[1]);
+     fTelnet._Crt.SetFont(val[0]);
+     //console.log('OnInput Changed Font to ' + val[0] + ' set Index to ' + val[1]);
+   }
+
+   function fontChange(val) {
+     fTelnet._Crt.SetFont(val[0]);
+     if (val[0]=="CP437" && DetectMobileBrowser.IsMobile) {
+       val[0]="CP437_4x8";
+       val[1]=0;
+     }
+     // set drop-down selected
+     var fd = document.querySelector('#FONT');
+     fd.selectedIndex=val[1];
+     //console.log('Changed Font to ' + val[0] + ' set Index to ' + val[1]);
+   }
+
+   var s = document.querySelector('#SERVERNAME');
+   s.addEventListener('input', function (evt) {
+     serverChange(this.value);
+   });
+
+   function serverChange(val) {
+     addToConnHistory(val);
+     bbs_name=val.split("|");
+     if (bbs_name[1]) {
+       bbs_val=bbs_name[1].split(":");
+       document.title=bbs_name[0];
+       console.log("Will connect to: " + bbs_name);
+       fTelnet._Options.Hostname = bbs_val[0];
+       fTelnet._Options.Port = bbs_val[1];
+       getNotesContent(); // This is to prevent overwriting of notes
+     }
+   }
+
+   function userCursor(e) {
+     e.preventDefault(); 
+     var key=e.key;
+     var vali = document.querySelector('#KEYINPUT').value;
+     if (vali!="") {
+       kein = vali.charCodeAt(0);
+       //console.log(vali);
+     }
+     if (key) {
+       keych = key.charCodeAt(0);
+     }
+     if (key=='ArrowLeft') {
+       //console.log('Left');
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.LEFT, KeyboardKeys.LEFT, false, false, false);
+     } else if (key=='ArrowRight') {
+       //console.log('Right');
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.RIGHT, KeyboardKeys.RIGHT, false, false, false);
+     } else if (key=='ArrowUp') {
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.UP, KeyboardKeys.UP, false, false, false);
+       //console.log('Up');
+     } else if (key=='ArrowDown') {
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.DOWN, KeyboardKeys.DOWN, false, false, false);
+       //console.log('Down');
+     } else if (key=='PageUp') {
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.PAGE_UP, KeyboardKeys.PAGE_UP, false, false, false);
+     } else if (key=='PageDown') {
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.PAGE_DOWN, KeyboardKeys.PAGE_DOWN, false, false, false);
+     } else if (key=='Home') {
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.HOME, KeyboardKeys.HOME, false, false, false);
+     } else if (key=='End') {
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.END, KeyboardKeys.END, false, false, false);
+     } else if (key=='Backspace') {
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.BACKSPACE, KeyboardKeys.BACKSPACE, false, false, false);
+     } else if (key=='Enter') {
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.ENTER, KeyboardKeys.ENTER, false, false, false);
+     } else if (key=='Escape') {
+       fTelnet._Crt.PushKeyDown(KeyboardKeys.ESCAPE, KeyboardKeys.ESCAPE, false, false, false);
+     } else {
+       if ((event.ctrlKey || event.ctrlMetaKey) && (key >= 'a' && key <= 'Z')) {
+         keyv = key.charCodeAt(0);
+         fTelnet._Crt.PushKeyPress(keyv,0,true,false,false); // CTRL Pressed Key
+       }
+       if ((event.altKey) && (key >= 'a' && key <= 'Z')) {
+         keyv = key.charCodeAt(0);
+         fTelnet._Crt.PushKeyPress(keyv,0,false,true,false); // CTRL Pressed Key
+       }
+       if (key >= "0" && key <= "9") {
+         keyv = key.charCodeAt(0);
+         fTelnet._Crt.PushKeyPress(keyv,0,false,false,false);
+       } 
+       if (key==32) {
+         fTelnet._Crt.PushKeyDown(0,KeyboardKeys.ENTER,false,false,false);
+       }
+
+     }
+     vali.value='';
+    }
+
+    function userInput() {
+      var val = document.querySelector('#KEYINPUT').value;
+      key = val.charCodeAt(0);
+      //console.log(key);
+      if (key==32) {
+        fTelnet._Crt.PushKeyDown(KeyboardKeys.SPACE, KeyboardKeys.SPACE, false, false, false);
+      }
+      fTelnet._Crt.PushKeyPress(key,0,false,false,false);
+      var y = document.querySelector('#KEYINPUT');
+      y.value='';
+    }
+
+    function toggleNotes() {
+      var items = [ "NOTESDIV" ];
+      items.forEach(toggleVisibility);
+    }
+
+    function toggleConfig() {
+      //var items = [ "KEYINPUT",  "SERVERNAME",  "SERVERLIST",  "FONT", "ECHO", "PROXY", "WSS", "LASTFAV" ];
+      var items = [ "CONFIG" ];
+      items.forEach(toggleVisibility);
+    }
+
+    function toggleVisibility(element, index) {
+
+      item = document.querySelector('#' + element);
+
+      if (item.style.display=="none") {
+        item.style.display="initial"; 
+      } else {
+        item.style.display="none"; 
+      }
+
+    }
+    
+    var p = document.querySelector('#RANDOM');
+    p.addEventListener( 'change', function() {
+
+      if(this.checked) {
+        setConfigRandom(1);
+      } else {
+        setConfigRandom(0);
+      }
+
+    });
+
+  function getStorageProxy() {
+    val = localStorage.getItem('defaultProxy');
+    return(val);
+  }
+
+  function setStorageProxy(proxy) {
+    localStorage.setItem('defaultProxy',proxy);
+  }
+
+  function getFontHistory(font) {
+    font = localStorage.getItem('lastFont');
+    idx = localStorage.getItem('lastFontIdx');
+    return([font,idx]);
+  }
+
+  function addToFontHistory(font,index) {
+    localStorage.setItem('lastFont',font);
+    localStorage.setItem('lastFontIdx',index);
+  }
+
+  function addToConnHistory(bbs_list) {
+    localStorage.setItem('bbs_connection_history',bbs_list);
+  }
+
+  function getConnHistory() {
+    var val = localStorage.getItem('bbs_connection_history');
+    if (!val) { addToConnHistory(''); }
+    return(val);
+  }
+
+ function init() {
+
+    //connbbs=getConnHistory();
+    //if (connbbs) {
+    //  serverChange(connbbs); 
+    //}
+    if (!getConfigRandom()) {o
+      setConfigRandom(1);
+    }
+    if (getConfigRandom()=="1") {
+      document.querySelector('#RANDOM').checked = true;
+      serverList = document.querySelector('#SERVERLIST');
+      var randomBBS = serverList.children[Math.floor(Math.random()*serverList.options.length)];
+      document.querySelector('#SERVERNAME').value = randomBBS.value;
+      serverChange(randomBBS.value);
+    }
+    if (!getStorageProxy()) {
+      serverList = document.querySelector('#PROXYLIST');
+      proxyChange('bbshub.org');
+    } else {
+      val = getStorageProxy();
+      document.querySelector('#PROXY').value = val;
+      proxyChange(val);
+    }
+    //fTelnet._Options.ForceWss = false;
+    fullScreen = 0;
+    fTelnet._Crt._AllowDynamicFontResize=false;
+    fTelnet._Options.LocalEcho = true;
+
+    lf = getFontHistory();
+    //console.log('LF INIT ' + lf);
+    if (!lf) {
+      fontChange(['CP437_4x8',0]);
+    } else {
+      fontChange(lf);
+    }
+
+    var s = document.querySelector('#SERVERNAME');
+    s.focus();
+    s.click();
+
+    fTelnet._MenuButton.style.color = '#424242';
+    fTelnet._StatusBarLabel.style.color = '#424242';
+    fTelnet._ConnectButton.style.color = '#424242';
+
+    //var items = [ "MOBILESUP" , "CONFIG"];
+    //items.forEach(toggleVisibility);
+
+    //toggleFullScreen();
+      
+ }
+
+ function getFontChange(val) {
+   var item = document.querySelector('#FONT').value;
+   //console.log('adding font : ' + item);
+   addToFontHistory(item);
+   //console.log(item);
+ }
+
+ function addServerToFav() {
+   var item = document.querySelector('#SERVERNAME').value;
+   addToConnHistory(item);
+   //console.log(item);
+ }
+
+ function getServerFromFav() {
+   var item = getConnHistory();
+   //var servername = document.querySelector('#SERVERNAME').value;
+   document.getElementById('SERVERNAME').value = item;
+   servername = "INFO|127.0.0.1:23";
+   //console.log(item);
+ }
+
+ function enterTheNotes() {
+   getNotesContent();
+   document.querySelector('#NOTES').cols=40;
+   document.querySelector('#NOTES').rows=12;
+ }
+
+ function exitTheNotes() {
+   saveNotesContent();
+   document.querySelector('#NOTES').cols=40;
+   document.querySelector('#NOTES').rows=1;
+ }
+
+ function getNotesContent() {
+   var s = document.getElementById('SERVERNAME').value;
+   var notes = localStorage.getItem(s+'Notes');
+   if (!notes) {
+     document.querySelector('#NOTES').value = '';
+   } else {
+     document.querySelector('#NOTES').value = notes;
+   }
+   //console.log("key: " + s + " value: " + item);
+ }
+
+ function setConfigRandom(value) {
+   //var item = document.querySelector('#RANDOM').value;
+   localStorage.setItem('ConfigRandom',value);
+   //console.log(item);
+ }
+
+ function getConfigRandom() {
+   val = localStorage.getItem('ConfigRandom');
+   return(val);
+ }
+
+
+ function saveNotesContent() {
+   var item = document.querySelector('#NOTES').value;
+   var s = document.getElementById('SERVERNAME').value;
+   localStorage.setItem(s+'Notes',item);
+   //console.log("key: " + s + " value: " + item);
+ }
+
+
+ //= 'Go!';
+
+
+ function toggleFullScreen() {        
+
+     fTelnet._MenuButton.style.color = '#424242';
+     fTelnet._StatusBarLabel.style.color = '#424242';
+     fTelnet._ConnectButton.style.color = '#424242';
+
+     var itemMobile = document.querySelector('#MOBILESUP');
+     var itemConfig = document.querySelector('#CONFIG');
+     if (itemMobile.style.display=="none") {
+       toggleVisibility("MOBILESUP");
+     } else {
+       if (itemConfig.style.display!="none") {
+         toggleVisibility("CONFIG");
+       }
+       toggleVisibility("MOBILESUP");
+     }
+ }
+
+ function fullScreenHoverOut() {
+   fTelnet._ConnectButton.style.color = "#404040";
+ }
+
+ function fullScreenHoverIn() {
+   fTelnet._ConnectButton.style.color = "#889988";
+ }
+
+</script>
+</div>
+</body>
+</html>

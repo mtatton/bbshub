@@ -1,0 +1,92 @@
+   ZDATA File Data
+
+   The server ZDATA File Data packet transfers a 1024-byte block of file data
+   to the client receiver. The packets are sent in a continuous stream to the
+   client with no client acknowledgement of individual packets. A client that
+   detects a non-recoverable data packet error is expected to abort the
+   transmission by sending the server five consecutive <CAN> characters.
+
+   0 1 2 3 4 5 6 7 8 9 1 1 2 3 4 5 6  7 8 9 2 1 2 3 4 5 6 7 8 9 3 1
+                       0                    0                   0
+   PadChar         StartofPacket   HeaderFormatType PacketType
+   FileOffset0     FileOffset1     FileOffset2      FileOffset3
+   FileDataBlock (variable)
+   ...
+   CRCCheckBytes
+
+           PadChar (1 byte): Pad character.
+
+           Value        Meaning
+           0x2A  Single pad character.
+
+           StartofPacket (1 byte): Packet start character.
+
+           Value       Meaning
+           0x18  ZDLE: Packet start.
+
+           HeaderFormatType (1 byte): Type of header format.
+
+           Value                           Meaning
+                 ASCII A: Packet has binary header with 16-bit CRC. This
+           0x41  format is used only by a sender when the following data
+                 block is binary coded.
+
+           PacketType (1 byte): Type of packet.
+
+           Value            Meaning
+           0x0A  ZDATA: Data packet(s) follow.
+
+           FileOffset0 (1 byte): Least-significant 8 bits of the offset of
+           FileDataBlock[] in the transferring file.
+
+           FileOffset1 (1 byte): Offset of FileDataBlock[] in the
+           transferring file.
+
+           FileOffset2 (1 byte): Offset of FileDataBlock[] in the
+           transferring file.
+
+           FileOffset3 (1 byte): Most-significant 8 bits of the offset of
+           FileDataBlock[] in the transferring file.
+
+           FileDataBlock (variable): Transferred file data.
+
+           CRCCheckBytes (2 bytes): A 16-bit CRC check field. For information
+           on the polynomial used for 16-bit CRC calculation, see ITU-T
+           Recommendation V.41, "Code-independent error-control system,"
+           November 1989.
+
+   Receipt of five successive CAN characters (0x18) aborts a file transfer
+   session.
+
+   For more information about CRC, see
+   [1]http://www2.rad.com/networks/1994/err_con/crc.htm.
+
+   Line Control and Escape Sequences
+
+   --------------------------------------------------------------------------
+
+   Both a line control sequence and an escape sequence consist of the ZDLE
+   character (0x18) followed by a single character. A line control sequence
+   is a command sent as a character outside the regular packet structure. An
+   escape sequence allows the receiver to ignore the character following the
+   ZDLE character.
+
+   Value                   Description
+   0x180D                  Ignored by receiver.
+   0x1810                  Ignored by receiver.
+   0x1811                  Ignored by receiver.
+   0x1813                  Ignored by receiver.
+   0x1868 (ZDLE + ASCII h) ZCRCE : CRC next, packet ends, header packet
+                           follows.
+   0x1869 (ZDLE + ASCII i) ZCRCG: CRC next, packet continues nonstop.
+   0x186A (ZDLE + ASCII j) ZCRCQ: CRC next, packet continues, ZACK expected.
+   0x186B (ZDLE + ASCII k) ZCRCW: CRC next, ZACK expected, end of packet.
+   0x186C (ZDLE + ASCII l) ZRUB0: Translate to rubout 0177.
+   0x186D (ZDLE + ASCII m) ZRUB1: Translate to rubout 0377.
+   0x187F                  Ignored by receiver.
+   0x188D                  Ignored by receiver.
+   0x1890                  Ignored by receiver.
+   0x1891                  Ignored by receiver.
+   0x1893                  Ignored by receiver.
+   0x18FF                  Ignored by receiver.
+

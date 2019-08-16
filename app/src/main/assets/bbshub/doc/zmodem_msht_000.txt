@@ -1,0 +1,161 @@
+
+   ZDATA File Data
+   ZEOF End of File
+   ZFILE File Attribute
+   ZFIN End of Session
+   ZRINIT Initialization Response
+   ZRPOS File Start Position
+   ZRQINIT Initialization Request
+
+                       HyperTerminal Zmodem File Transfer
+
+   The HyperTerminal Zmodem File Transfer protocol provides a simple means of
+   point-to-point serial file transfer. The session initialization dialog
+   includes attributes that allow an interrupted file transfer to be resumed.
+
+   This protocol allows the following file transfers:
+
+     * Multiple files may be transferred per session.
+
+     * File data is transmitted in 1024-byte data blocks.
+
+     * Data packets are strung together and acknowledged, only once, at
+       end-of-file.
+
+     * Error detection supports checksum error checking.
+
+     * An interrupted file transfer can be restarted from the point of
+       interruption.
+
+   This protocol uses the following packets.
+
+               Packet                             Description
+   ZRQINIT Initialization      Server initialization request.
+   Request Packet
+   ZRINIT Initialization       Client initialization response.
+   Response Packet
+   ZFILE File Attribute Packet Server packet informing the client of file
+                                   attributes, including the file name.
+   ZRPOS File Start Position   Client packet defining the position in the
+   Packet                          data file at which the transfer should
+                                   begin.
+   ZDATA File Data Packet      Server packet containing 1024 bytes of
+                                   file data.
+   ZEOF End of File Packet     Server packet marking the end of
+                                   transmission for this file.
+                                   Server packet marking the end of the
+   ZFIN End of Session Packet  HyperTerminal Zmodem File Transfer
+                                   session.
+
+   The server negotiates file transfer attributes with the client at the
+   start of a file transfer session. The attributes include a means of
+   resuming a previously interrupted file transfer. The server transfers
+   files in a continuous stream of data packets. The client does not
+   acknowledge successful data packets, but sends a single acknowledgement
+   when an end-of-file packet is encountered. If the client detects an
+   incomplete data packet, it aborts the file transfer. If the server
+   presents the same file for transfer, the client indicates the point in the
+   file at which transmission should resume.
+
+   To initiate a file transfer from server to client, the server sends the
+   following short ASCII line control character sequence to activate the
+   client receiver:
+
+ rz<CR>
+
+   The server follows this sequence with an initialization request packet
+   with a packet type code ZRQINIT (<ZDLE>+ASCII B), for example:
+
+ <PAD><PAD><ZDLE> 42 30 30 30 30 30 30 30
+  30 30 30 30 30 30 30 <CR> <LF> <XON>
+
+   Note  Command codes are listed below.
+
+   A client initialization response packet (ZRINIT) indicates that the client
+   is ready to receive a file. It contains the following flag values defining
+   client capabilities and session options:
+
+ <PAD><PAD><ZDLE> 42 30 31 30 30 30 30 30 30 32 33 62 65 35 30 <CR><LF>
+
+   A server ZFILE packet then notifies the client of the file attributes to
+   transfer, including file name, file length, and modification date. The
+   following flag bytes define the file encryption and compression
+   attributes:
+
+ <PAD><ZDLE> 41 04 00 00 00 01 99 <FILENAME><FILE LENGTH>
+ <MODIFICATION DATE><OTHER ATTRIBUTES><XON>
+
+   The client responds with a ZRPOS packet that includes the start position
+   in the file where data transmission will begin. A non-zero start position
+   allows previously interrupted file transfers to be restarted at the point
+   of interruption. The following is an example of a ZRPOS packet for a new
+   file transmission:
+
+ <PAD><PAD><ZDLE> 42 30 39 30 30 30 30 30 30 30 30 61 38 37 63 <CR><LF>
+
+   The server then transfers the file in a continuous stream of ZDATA packets
+   terminated by the following ZCRCE escape sequence:
+
+ <PAD><ZDLE> 41 0A 00 00 00 00 46 AE <FILE DATA> ... <ZDLE> 68 CB 3A 2A
+
+   and the following end-of-file (ZEOF) packet:
+
+ <ZDLE> 41 0B 36 00 00 00 E7 8F
+
+   The receiving client does not acknowledge server ZDATA packets. If the
+   client detects a ZDATA packet transmission error, it aborts the session by
+   sending five consecutive cancel characters (<CAN>). If there are no ZDATA
+   packet errors, the client acknowledges the ZEOF packet with the following
+   ZRINIT packet to indicate that it is ready to receive the next transfer
+   file, if any:
+
+ <PAD><PAD><ZDLE> 42 30 31 30 30 30 30 30 30 32 33 62 65 35 30 <CR><LF>
+
+   After the last file is transferred, the server marks the end of the
+   session by sending the following ZFIN packet, which is echoed back by the
+   client:
+
+ <PAD><PAD><ZDLE> 42 30 38 30 30 30 30 30 30 30 30 30 32 32 64 <CR><LF>
+
+   The server then terminates the session by sending a short line control
+   character sequence consisting of the following two ASCII O characters:
+
+ 4F 4F
+
+   The following are HyperTerminal Zmodem File Transfer packet command codes:
+
+   Command Code Description
+   0x00         ZRQINIT: Request for a receive initialization packet.
+   0x01         ZRINIT: Receive initialization packet.
+   0x02         ZSINIT: Send initialization sequence (optional).
+   0x03         ZACK: Positive acknowledgement (ACK).
+   0x04         ZFILE: File name from sender.
+   0x05         ZSKIP: To sender: skip this file.
+   0x06         ZNAK: Last packet was incomplete.
+   0x07         ZABORT: Abort batch transfers.
+   0x08         ZFIN: Finish session.
+   0x09         ZRPOS: Resume data transmission at this file position.
+   0x0A         ZDATA: Data packet(s) follow.
+   0x0B         ZEOF: End of file.
+   0x0C         ZFERR: Fatal read or write error detected.
+   0x0D         ZCRC: Request for file CRC and response.
+   0x0E         ZCHALLENGE: Receiver's challenge.
+   0x0F         ZCOMPL: Request is complete.
+   0x10         ZCAN: Other end terminated the session by sending 5 CAN
+                characters.
+   0x11         ZFREECNT: Request for free bytes on file system.
+   0x12         ZCOMMAND: Command from sending program.
+   0x13         ZSTDERR: Output to standard error, data follows.
+   0x14         ZBADFMT: Data packed format error.
+   0x15         ZMDM_ACKED: Reserved.
+   0x16         ZMDM_VIRUS: Error due to virus.
+   0x17         ZMDM_REFUSE: File was refused, no reason given.
+   0x18         ZMDM_OLDER: File was refused because it was older.
+   0x19         ZMDM_INUSE: File is currently in use.
+   0x1A         ZMDM_CARRIER_LOST: Lost carrier.
+
+   For information about the Point-to-Point Protocol, see [38]RFC 1548: The
+   Point-to-Point Protocol (PPP).
+
+   © 2011 Microsoft. All rights reserved.
+

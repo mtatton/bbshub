@@ -1,0 +1,147 @@
+﻿body {
+  color: darkGrey;
+  font-size: 9px;
+}
+
+.fTelnetContainer {
+    box-sizing: content-box;
+    margin: auto;
+}
+
+.fTelnetContainer .fTelnetButtons,
+.fTelnetContainer .fTelnetScrollback,
+.fTelnetContainer .fTelnetFocusWarning,
+.fTelnetContainer .fTelnetClientContainer,
+.fTelnetContainer .fTelnetStatusBar {
+  box-sizing: content-box;
+}
+
+.fTelnetContainer canvas {
+  margin: auto;
+}
+
+//.fTelnetKeyboard {
+//  width: 100%;
+//}
+
+.fTelnetClientContainer {
+    position: relative;
+    margin: auto;
+    scrollbar-color: #333333 black;
+    border: 0px solid grey;
+}
+
+.fTelnetConnectButton {
+    background-color: #101010;
+    color: #aaaaaa;
+    border: 1px solid black;
+    border-radius: 2px;
+    display: inline-block;
+    font: 9px Tahoma;
+    margin-right: 10px;
+    padding: 2px 1px;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 0px 0 rgba(0, 0, 0, 0.1);
+}
+
+.fTelnetMenuButton {
+    background-color: #101010;
+    color: #aaaaaa;
+    border: 1px solid black;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 10px;
+    font: 09px Tahoma;
+    padding: 2px 1px;
+    text-decoration: none;
+    text-shadow: 0 0px 0 rgba(0, 0, 0, 0.1);
+}
+
+.fTelnetCrtCanvas {
+    display: block;
+    margin: auto;
+}
+
+.fTelnetFocusWarning {
+    background-color: red;
+    color: white;
+    font: 10px Tahoma;
+    margin: auto;
+    padding: 5px;
+    text-align: center;
+}
+
+.fTelnetMenuButtons {
+    background-color: black;
+    color: #eeeeee;
+    border: 1px solid #666;
+    margin-right: 4px;
+    padding: 4px 8px;
+    position: absolute;
+    text-decoration: none;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.fTelnetMenuButtons a {
+  color: #eeeeee;
+  border: 1px solid black;
+  border-radius: 4px;
+  display: block;
+  font: 12px Tahoma;
+  padding: 2px 8px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.fTelnetScrollback {
+    background-color: black;
+    color: #eeeeee;
+    font: 9px Tahoma; 
+    margin: auto;
+    padding: 2px;
+    text-align: center;
+}
+
+.fTelnetScrollback a {
+  color: darkGray;
+  padding: 0 2px;
+  text-decoration: none;
+}
+
+.fTelnetStatusBar {
+    background-color: Black;
+    color: darkGrey;
+    font: 9px Tahoma;
+    margin: auto;
+    padding: 2px;
+    text-align: left;
+}
+
+.ConfigInput {
+  background-color: Black;
+  color: darkGrey;
+  border: 1px solid darkGrey;
+  font-size: 9px;
+}
+
+#ECHO {
+  transform: scale(0.6180);
+}
+
+#CONFIGBTN {
+  color: "#484848";
+}
+
+#KEYINPUT {
+  background-color: black;
+  color: darkGray;
+  border: 1px solid rgba(128,128,128,0.48);
+}
+
+::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+    background: #424242;
+    color: #000000;
+}

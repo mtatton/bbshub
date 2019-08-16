@@ -1,0 +1,16 @@
+http://wiki.synchro.net/ref:zmodem
+http://synchro.net/docs/sexyz.txt
+http://gallium.inria.fr/~doligez/zmodem/zmodem.txt
+https://en.wikipedia.org/wiki/ZMODEM
+https://web.archive.org/web/20110713195219/http://msdn.microsoft.com/en-us/library/ms817878.aspx
+https://stackoverflow.com/questions/9611000/understanding-the-zmodem-protocol
+https://web.archive.org/web/20100806071106/http://msdn.microsoft.com/en-us/library/ms819791.aspx
+https://web.archive.org/web/20100806071106/http://msdn.microsoft.com/en-us/library/ms819791.aspx
+https://github.com/mtatton/mysticbbs/blob/master/mdl/m_protocol_zmodem.pas
+https://github.com/mtatton/qodem/blob/master/source/zmodem.c
+http://qodem.sourceforge.net/
+http://myip.randm.ca/
+http://gallium.inria.fr/~doligez/zmodem/zmodem.txt
+http://synchro.net/docs/sexyz.txt
+http://wiki.synchro.net/ref:zmodem
+http://www.asciitable.com/

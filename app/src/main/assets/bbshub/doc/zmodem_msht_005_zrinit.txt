@@ -1,0 +1,144 @@
+   ZRINIT Initialization Response
+
+   The client ZRINIT Initialization Response packet indicates that the client
+   is ready to receive a file. It contains flag values defining client
+   capabilities and session options.
+
+   The client issues this packet in response to a server ZRQINIT packet at
+   the beginning of a session, or in response to a server ZEOF packet at the
+   completion of a file transfer.
+
+   When parsing packet fields, note that this packet is in Zmodem hexadecimal
+   format. In Zmodem hex format, each hexadecimal digit in the PacketType,
+   Flagn, and CRCCheckBytes[] fields is converted to a US-ASCII character
+   before transmission. For example, the one-byte PacketType value 0x01 is
+   transmitted as ASCII 01 and so appears on the line as the hexadecimal
+   value 0x3031.
+
+   0 1 2 3 4 5 6 7 8 9 1 1 2 3 4 5 6 7 8 9 2 1 2 3 4 5 6 7 8 9 3 1
+                       0                   0                   0
+   PadChars                        StartofPacket   FormatType
+   PacketType                      Flag3
+   Flag2                           Flag1
+   Flag0                           CRCCheckBytes
+   ...
+
+           PadChars (2 bytes): Pad characters.
+
+           Value          Meaning
+           0x2A2A Repeated pad character.
+
+           StartofPacket (1 byte): Packet start character.
+
+           Value       Meaning
+           0x18  ZDLE: Packet start.
+
+           FormatType (1 byte): Type of header format.
+
+           Value                           Meaning
+           0x42  Denotes that the PacketType, Flagn, and CRCCheckBytes[]
+                 fields in this packet are in Zmodem hex format.
+
+           PacketType (2 bytes): Type of packet.
+
+           Value                           Meaning
+           0x01  ZRINIT: Receive initialization packet. The field is
+                 transmitted in Zmodem hexadecimal format.
+
+           Flag3 (2 bytes): Extended option flags. The field is transmitted
+           in Zmodem hexadecimal format. The value can be the following:
+
+           Value                    Meaning
+           0x40  ZXSPARS: Encoding for sparse file operations.
+
+           Flag2 (2 bytes): Transport option flags. The field is transmitted
+           in Zmodem hexadecimal format. The value can be one of the
+           following:
+
+           Value            Meaning
+           0x01  ZTLZW: Lempel-Ziv compression.
+           0x02  ZTCRYPT: Encryption.
+           0x03  ZTRLE: Run length encoding.
+
+           Flag1 (2 bytes): File management option flags. The field is
+           transmitted in Zmodem hexadecimal format. The value can be one of
+           the following:
+
+           Value                       Meaning
+           0x80  ZMSKNOLOC: Skip file if not present at receiver.
+           0x01  ZMNEWL: Transfer if source is newer or longer.
+           0x02  ZMCRC: Transfer if different file CRC or length.
+           0x03  ZMAPND: Append contents to existing file (if any).
+           0x04  ZMCLOB: Replace existing file.
+           0x05  ZMNEW: Transfer if source is newer.
+           0x06  ZMDIFF: Transfer if dates or lengths are different.
+           0x07  ZMPROT: Protect destination file.
+
+           Flag0 (2 bytes): Status flags. The field is transmitted in Zmodem
+           hexadecimal format. The value can be a combination of the
+           following:
+
+           Value                           Meaning
+           0x01  CANFDX: Receiver can send and receive true FDX.
+           0x02  CANOVIO: Receiver can receive data during disk input/output
+                 (I/O).
+           0x04  CANBRK: Receiver can send a break signal.
+           0x08  CANCRY: Receiver can decrypt.
+           0x10  CANLZW: Receiver can uncompress.
+           0x20  CANFC32: Receiver can use 32-bit frame check.
+           0x40  ESCCTL: Receiver expects control characters to have escaped.
+           0x80  ESC8: Receiver expects 8th bit to have escaped.
+
+           CRCCheckBytes (4 bytes): A 16-bit CRC check field. For information
+           on the polynomial used for 16-bit CRC calculation, see ITU-T
+           Recommendation V.41, "Code-independent error-control system,"
+           November 1989. The field is transmitted in Zmodem hexadecimal
+           format.
+
+   For more information about CRC, see
+   [1]http://www2.rad.com/networks/1994/err_con/crc.htm.
+
+   Zmodem Hexadecimal Format
+
+   --------------------------------------------------------------------------
+
+   Fields in this packet are in Zmodem hexadecimal format. In Zmodem
+   hexadecimal format, each of the two digits in a hexadecimal byte is
+   re-encoded before transmission into the corresponding US-ASCII character
+   from the set "0123456789abcdef". For example, the hexadecimal value "0x2E"
+   is re-encoded before transmission on the wire into ASCII "2e" ("0x3265").
+
+   This type of re-encoding allows the communication of any hexadecimal value
+   across non-transparent media that may reserve selected byte values for
+   media functions, for example, for modem commands. Such media are
+   transparent to the US-ASCII characters "0123456789abcdef".
+
+   Line Control and Escape Sequences
+
+   --------------------------------------------------------------------------
+
+   Both a line control sequence and an escape sequence consist of the ZDLE
+   character (0x18) followed by a single character. A line control sequence
+   is a command that is sent as a character outside of the regular packet
+   structure. An escape sequence allows the receiver to ignore the character
+   following the ZDLE character.
+
+   Value                   Description
+   0x180D                  Ignored by receiver.
+   0x1810                  Ignored by receiver.
+   0x1811                  Ignored by receiver.
+   0x1813                  Ignored by receiver.
+   0x1868 (ZDLE + ASCII h) ZCRCE : CRC next, packet ends, header packet
+                           follows.
+   0x1869 (ZDLE + ASCII i) ZCRCG: CRC next, packet continues nonstop.
+   0x186A (ZDLE + ASCII j) ZCRCQ: CRC next, packet continues, ZACK expected.
+   0x186B (ZDLE + ASCII k) ZCRCW: CRC next, ZACK expected, end of packet.
+   0x186C (ZDLE + ASCII l) ZRUB0: Translate to rubout 0177.
+   0x186D (ZDLE + ASCII m) ZRUB1: Translate to rubout 0377.
+   0x187F                  Ignored by receiver.
+   0x188D                  Ignored by receiver.
+   0x1890                  Ignored by receiver.
+   0x1891                  Ignored by receiver.
+   0x1893                  Ignored by receiver.
+   0x18FF                  Ignored by receiver.
+

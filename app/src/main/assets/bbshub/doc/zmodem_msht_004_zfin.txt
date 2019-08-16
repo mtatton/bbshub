@@ -1,0 +1,71 @@
+   ZFIN End of Session
+
+   Sent after the last file is transferred, the server ZFIN End of Session
+   packet marks the end of a session and is echoed back by the client.
+
+   The ZFIN End of Session packet has a fixed format:
+
+ <PAD> <PAD>
+ <ZDLE> 42 30 38 30 30 30 30 30 30 30 30 30 32 32 64
+ <CR> <LF>
+
+   0 1 2 3 4 5 6 7 8  9 1 1 2 3 4 5 6 7 8 9 2 1 2 3 4 5 6 7 8 9 3 1
+                        0                   0                   0
+   PadChars                         StartofPacket   FormatType
+   PacketType      EndOfSessionData
+
+           PadChars (2 bytes): Pad characters.
+
+           Value          Meaning
+           0x2A2A Repeated pad character.
+
+           StartofPacket (1 byte): Packet start character.
+
+           Value       Meaning
+           0x18  ZDLE: Packet start.
+
+           FormatType (1 byte): Type of header format.
+
+           Value                           Meaning
+           0x42  Denotes that the PacketType and EndOfSessionData fields are
+                 in Zmodem hex format.
+
+           PacketType (1 byte): Type of packet.
+
+           Value      Meaning
+           ZEOF   End of session.
+           0x3038
+
+           EndOfSessionData (1 byte): Marks the end of session.
+
+                         Value                   Meaning
+           0x303030303030303030323264<CR><LF> End of session
+
+   Both a line control sequence and an escape sequence consist of the ZDLE
+   character (0x18) followed by a single character. A line control sequence
+   is a command sent as a character outside the regular packet structure. An
+   escape sequence allows the receiver to ignore the character following the
+   ZDLE character.
+
+   Value                   Description
+   0x180D                  Ignored by receiver.
+   0x1810                  Ignored by receiver.
+   0x1811                  Ignored by receiver.
+   0x1813                  Ignored by receiver.
+   0x1868 (ZDLE + ASCII h) ZCRCE : CRC next, packet ends, header packet
+                           follows.
+   0x1869 (ZDLE + ASCII i) ZCRCG: CRC next, packet continues nonstop.
+   0x186A (ZDLE + ASCII j) ZCRCQ: CRC next, packet continues, ZACK expected.
+   0x186B (ZDLE + ASCII k) ZCRCW: CRC next, ZACK expected, end of packet.
+   0x186C (ZDLE + ASCII l) ZRUB0: Translate to rubout 0177.
+   0x186D (ZDLE + ASCII m) ZRUB1: Translate to rubout 0377.
+   0x187F                  Ignored by receiver.
+   0x188D                  Ignored by receiver.
+   0x1890                  Ignored by receiver.
+   0x1891                  Ignored by receiver.
+   0x1893                  Ignored by receiver.
+   0x18FF                  Ignored by receiver.
+
+   For more information about CRC, see
+   [1]http://www2.rad.com/networks/1994/err_con/crc.htm.
+
